@@ -28,7 +28,7 @@ describe('visitor demo isolation', () => {
     for (const session of [A, B]) await withStorageSession(session, async () => {
       const packet = (await loadCasePacket('DISP-002'))!;
       expect(packet.status).toBe('open');
-      expect(packet.caseRecord.version).toBe(1);
+      expect(packet.caseRecord.version).toBe(2);
       expect(packet.decisions).toHaveLength(0);
       expect(packet.settlements).toHaveLength(0);
     });

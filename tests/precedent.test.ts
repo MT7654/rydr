@@ -13,7 +13,7 @@ import {
 } from '../src/domain/precedent';
 import { retrievePrecedents, tagSimilarity } from '../src/domain/precedentRetrieval';
 import { evaluateActivation } from '../src/domain/precedentGate';
-import { appendCaseVersion, getCase, getPolicyPack } from '../src/repositories/cases';
+import { appendCaseVersion, getCase, getCaseVersion, getPolicyPack } from '../src/repositories/cases';
 import { getPrecedent, listApprovedPrecedents, savePrecedent } from '../src/repositories/precedents';
 import { captureRunSnapshot, getRunSnapshot } from '../src/repositories/snapshots';
 import { loadEvaluationSet, loadHeldOutCases, type EvaluationCase } from '../src/lib/evaluationSet';
@@ -91,7 +91,8 @@ async function heldOutCase(caseId: string): Promise<{
 
 /** Same as `prepare`, for cases the repository builds rather than reads from a fixture. */
 async function prepareFromStore(caseId: string): Promise<Prepared> {
-  const caseRecord = await getCase(caseId);
+  // Pin this historical rule-gap test to the original policy basis.
+  const caseRecord = caseId === 'DISP-002' ? await getCaseVersion(caseId, 1) : await getCase(caseId);
   if (!caseRecord) throw new Error(`unknown case ${caseId}`);
   const pack = await getPolicyPack(caseRecord.policyVersion);
   if (pack.source !== 'rydr_demo') throw new Error(`expected the demo pack for ${caseId}`);

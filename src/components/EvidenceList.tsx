@@ -95,6 +95,8 @@ function EvidenceText({ item }: { item: EvidenceItem }) {
           {item.payload.justificationNote ?? ''}
         </p>
       );
+    case 'fare':
+      return <p className="evidence__summary">Quote S${(item.payload.quotedCents/100).toFixed(2)} at {item.payload.quoteMultiplier}×; charged S${(item.payload.chargedCents/100).toFixed(2)} at {item.payload.startMultiplier}×. Pre-pickup notification: {item.payload.notifiedBeforePickup === null ? 'unknown' : item.payload.notifiedBeforePickup ? 'sent' : 'not sent'}. Fixed fee S${(item.payload.fixedFeeCents/100).toFixed(2)} remains outside surge.</p>;
     case 'history':
       return (
         <p className="evidence__summary">

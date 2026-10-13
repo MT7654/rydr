@@ -27,6 +27,7 @@ import {
   textCorpus,
 } from './evidence';
 import { assessImageIntegrity } from './imageEvidence';
+import { applyReferencePolicy } from './referencePolicy';
 
 /**
  * Deterministic evidence and policy engine.
@@ -53,6 +54,9 @@ export interface NoShowEvaluation {
 }
 
 export interface RouteEvaluation {
+  ledgerBasis?: 'aggregate_totals';
+  notificationStatus?: 'agreed' | 'not_informed' | 'unknown';
+  eligibleRefundCents?: number | null;
   comparison: RouteComparison;
   justification: 'verified_justification' | 'verified_no_justification' | 'unknown';
   ledgerReconciled: boolean;
@@ -80,6 +84,7 @@ export interface DeterministicEvaluation {
   noShow: NoShowEvaluation | null;
   route: RouteEvaluation | null;
   damage: DamageEvaluation | null;
+  fare?: { quotedCents: number; chargedCents: number; differentialCents: number | null; quoteMultiplier: number; startMultiplier: number; fixedFeeCents: number; notified: boolean | null; reconciled: boolean } | null;
 }
 
 const CONTACT_ISSUE =
@@ -498,6 +503,11 @@ export function screenSafetyAllegations(caseRecord: CaseRecord): string[] {
     'harass',
     'sexual',
     'weapon',
+    'reckless driving',
+    'dangerous driving',
+    'felt unsafe',
+    'inappropriate behavior',
+    'inappropriate behaviour',
   ];
   return markers.filter((marker) => corpus.includes(marker));
 }
@@ -650,7 +660,7 @@ export function evaluateCase(
     new Set(result.findings.flatMap((finding) => finding.policyIds)),
   ).sort();
 
-  return {
+  return applyReferencePolicy(caseRecord, pack, {
     caseId: caseRecord.id,
     caseVersion: caseRecord.version,
     category: caseRecord.category,
@@ -672,5 +682,5 @@ export function evaluateCase(
       caseRecord.category === 'damage'
         ? (result as ReturnType<typeof evaluateDamage>).evaluation
         : null,
-  };
+  });
 }

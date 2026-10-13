@@ -102,7 +102,7 @@ function noShowConditions(evaluation: DeterministicEvaluation): ConditionDraft[]
       kind: 'policy_ambiguity',
       summary: noShow.materialStartConflict
         ? 'The choice of governing waiting clock changes the outcome, and no attached policy says which clock applies.'
-        : 'A supplied sample policy is attached but does not define which clock governs the waiting period.',
+        : evaluation.issues.some(issue => issue.startsWith('Policy-source conflict:')) ? 'The embedded sample policy and newly supplied reference disagree. A policy owner must establish which source governs.' : 'A supplied sample policy is attached but does not define which clock governs the waiting period.',
       policyIds: ['NS-06'],
       tool: 'effective_policy',
       whyItMatters:
@@ -171,7 +171,9 @@ export function buildEvidencePlan(
   const drafts =
     caseRecord.category === 'no_show_charge'
       ? noShowConditions(evaluation)
-      : routeConditions(evaluation);
+      : caseRecord.category === 'fare_dispute' && (!evaluation.fare || !evaluation.fare.reconciled || evaluation.fare.notified === null)
+        ? [{ id: 'C-FARE', kind: 'evidence_gap' as const, summary: 'Confirm the binding quote, final charge, surge-only difference and pre-pickup notification.', policyIds: ['REF-3.1', 'REF-3.2', 'REF-3.4'], tool: 'fare_ledger' as const, whyItMatters: 'Only source records that reconcile the surge differential and establish notification can support an automatic refund.', fields: ['upfrontQuote', 'finalFare', 'surgeComponents', 'notificationRecord'] }]
+        : routeConditions(evaluation);
 
   const conditions: DisputedCondition[] = drafts.map((draft) => ({
     id: draft.id,

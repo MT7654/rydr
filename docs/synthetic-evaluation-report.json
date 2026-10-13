@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-13T16:05:39.903Z",
+  "generatedAt": "2026-10-13T17:15:11.251Z",
   "mode": "fixture",
   "provider": "local scripted fixture; no live LLM calls",
   "sampleSize": 8,
@@ -10,8 +10,8 @@
   "unnecessaryEscalationsAgainstLabels": 0,
   "modelInvocations": 24,
   "externalPaidCalls": 0,
-  "p50LatencyMs": 436,
-  "p95LatencyMs": 543,
+  "p50LatencyMs": 242,
+  "p95LatencyMs": 383,
   "rows": [
     {
       "caseId": "EVAL-001",
@@ -19,7 +19,7 @@
       "actual": "uphold",
       "automatic": true,
       "calls": 3,
-      "latencyMs": 543,
+      "latencyMs": 383,
       "resolvedCitations": 17,
       "agreement": true
     },
@@ -29,7 +29,7 @@
       "actual": "refund",
       "automatic": true,
       "calls": 3,
-      "latencyMs": 391,
+      "latencyMs": 250,
       "resolvedCitations": 17,
       "agreement": true
     },
@@ -39,7 +39,7 @@
       "actual": "human_review",
       "automatic": false,
       "calls": 3,
-      "latencyMs": 436,
+      "latencyMs": 235,
       "resolvedCitations": 13,
       "agreement": true
     },
@@ -49,7 +49,7 @@
       "actual": "human_review",
       "automatic": false,
       "calls": 3,
-      "latencyMs": 422,
+      "latencyMs": 198,
       "resolvedCitations": 11,
       "agreement": true
     },
@@ -59,7 +59,7 @@
       "actual": "uphold",
       "automatic": true,
       "calls": 3,
-      "latencyMs": 522,
+      "latencyMs": 276,
       "resolvedCitations": 16,
       "agreement": true
     },
@@ -69,7 +69,7 @@
       "actual": "refund",
       "automatic": true,
       "calls": 3,
-      "latencyMs": 541,
+      "latencyMs": 242,
       "resolvedCitations": 17,
       "agreement": true
     },
@@ -79,7 +79,7 @@
       "actual": "human_review",
       "automatic": false,
       "calls": 3,
-      "latencyMs": 366,
+      "latencyMs": 224,
       "resolvedCitations": 17,
       "agreement": true
     },
@@ -89,7 +89,7 @@
       "actual": "human_review",
       "automatic": false,
       "calls": 3,
-      "latencyMs": 472,
+      "latencyMs": 290,
       "resolvedCitations": 11,
       "agreement": true
     }

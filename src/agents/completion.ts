@@ -109,7 +109,7 @@ async function complete(run: RunRecord): Promise<CompletionOutcome> {
             ? resolution.escalationReasons
             : ['evidence_insufficient'],
         reasonSummary:
-          'The evidence did not support a deterministic outcome, so this case needs a human reviewer.',
+          resolution.escalationReasons.some(reason => reason.startsWith('policy_required_review:')) ? 'The supplied policy requires a human decision for this route deviation. Review the recorded evidence and calculated eligibility before recording a decision.' : 'The evidence did not support a deterministic outcome, so this case needs a human reviewer.',
         openQuestions: run.judge?.missingEvidence ?? [],
       });
       outcome = {

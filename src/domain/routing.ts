@@ -62,6 +62,7 @@ export interface RoutingDecision {
 /* ------------------------------------------------------------------ */
 
 export const ESCALATION_KINDS = [
+  'policy_required_review',
   'evidence_gap',
   'policy_ambiguity',
   'integrity',
@@ -71,6 +72,7 @@ export const ESCALATION_KINDS = [
 export type EscalationKind = (typeof ESCALATION_KINDS)[number];
 
 export const ESCALATION_LABELS: Record<EscalationKind, string> = {
+  policy_required_review: 'Policy requires a reviewer',
   evidence_gap: 'Evidence gap',
   policy_ambiguity: 'Unresolved policy',
   integrity: 'Integrity concern',
@@ -84,6 +86,7 @@ export const ESCALATION_LABELS: Record<EscalationKind, string> = {
  * different jobs, and a runtime failure is neither.
  */
 export const ESCALATION_NEXT_ACTIONS: Record<EscalationKind, string> = {
+  policy_required_review: 'Review the existing evidence and record a supported decision. This policy limit requires a human decision; another model run cannot waive it.',
   evidence_gap: 'Request or retrieve the missing record, then re-run against the new version.',
   policy_ambiguity: 'Escalate to a policy owner. More evidence cannot settle this.',
   integrity: 'Review the integrity signals and their benign explanations before deciding.',
@@ -93,6 +96,7 @@ export const ESCALATION_NEXT_ACTIONS: Record<EscalationKind, string> = {
 
 const CODE_TO_KIND: { pattern: RegExp; kind: EscalationKind }[] = [
   { pattern: /safety|unsafe|assault|threat|harass|weapon|injur|accident/i, kind: 'safety' },
+  { pattern: /policy_required_review/i, kind: 'policy_required_review' },
   { pattern: /policy_ambiguity|policy_clarification|governing_clock|undefined_clock/i, kind: 'policy_ambiguity' },
   { pattern: /integrity|duplicate|reused|impossible|inconsistent_source/i, kind: 'integrity' },
   { pattern: /runtime|provider|timeout|cap_exhausted|invalid_output|run_failed|transport/i, kind: 'runtime_failure' },

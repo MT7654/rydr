@@ -35,6 +35,11 @@ interface Props {
 }
 
 export function CaseVisual({ caseRecord, evaluation, pack }: Props) {
+  if (caseRecord.category === 'fare_dispute') {
+    const fare = evaluation.fare;
+    if (!fare) return <div className="notice">Quote and surge records are missing. No fare comparison is inferred.</div>;
+    return <figure className="card" aria-label="Fare and surge comparison"><p className="eyebrow">Same ride · changed price</p><h2>Where did the difference come from?</h2><div className="grid grid--2"><div><p>Upfront quote · {fare.quoteMultiplier}×</p><strong className="amount">S${(fare.quotedCents / 100).toFixed(2)}</strong></div><div><p>Charged fare · {fare.startMultiplier}×</p><strong className="amount">S${(fare.chargedCents / 100).toFixed(2)}</strong></div></div><p><strong>Surge difference: S${((fare.differentialCents ?? 0) / 100).toFixed(2)}</strong> · fixed fee S${(fare.fixedFeeCents / 100).toFixed(2)} stays outside surge.</p><p className="small">Notification: {fare.notified === null ? 'unknown' : fare.notified ? 'sent' : 'not sent in the supplied pricing log'}. Source totals {fare.reconciled ? 'reconcile' : 'need verification'}. This comparison is evidence, not a payment receipt.</p></figure>;
+  }
   if (caseRecord.category === 'damage') return <div className="notice">Compare the submitted views below, request a verified before/after record, and refer liability to a reviewer. No route geometry applies to this damage case.</div>;
   const thresholds = pack.source !== 'supplied_sample' ? pack.thresholds : null;
 
@@ -515,6 +520,7 @@ function RouteComparison({
       </div>
 
       {thresholds ? (
+        thresholds.referenceRules ? <p className="case-visual__note">The supplied policy flags excess distance over 1,000 m, without a percentage condition. Above {thresholds.referenceRules.routeAutoMaxMeters} m, a reviewer decides. Source fare totals {evaluation.route?.ledgerReconciled ? 'are consistent' : 'need verification'}; a full itemized ledger is not inferred. {evaluation.route?.eligibleRefundCents != null ? `Calculated refund eligibility: S$${(evaluation.route.eligibleRefundCents / 100).toFixed(2)}. This is not a posted award.` : ''}</p> :
         <p className="case-visual__note">
           A deviation is flagged only when it exceeds both {thresholds.routeExcessMeters} m and{' '}
           {thresholds.routeExcessPercent}% of the planned distance. Justification status:{' '}

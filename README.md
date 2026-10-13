@@ -34,7 +34,11 @@ npm run build
 npm start -- --port 3000
 ```
 
-Production uses `.next-production` separately from the development build. The latest repair verification passed 390 tests, with 8 optional external integration tests skipped; live ADP assessment and Case Navigator were also checked through the browser.
+Production uses `.next-production` separately from the development build. The latest repair verification passed 404 tests, with 8 optional external integration tests skipped; live ADP assessment and Case Navigator were also checked through the browser.
+
+## Additional supplied datasets
+
+DISP-001 (route deviation), DISP-002 (unchanged source, new policy revision), and DISP-003 (surge pricing) now use the explicitly assigned hackathon policy v2.1. The new reference and public website policies remain separate. Supplied expected answers are not agent inputs; source conflicts and review limits remain visible. [Import analysis and verification](docs/34-new-supplied-datasets-and-policy.md).
 
 ## Submission assets
 

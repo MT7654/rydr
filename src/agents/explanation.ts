@@ -52,6 +52,8 @@ export function judgeReasoningSummary(evaluation: DeterministicEvaluation): stri
 
 export function whatWouldChangeIt(evaluation: DeterministicEvaluation): string[] {
   const suggestions: string[] = [];
+  if (evaluation.route?.eligibleRefundCents != null && evaluation.disposition === 'human_review') suggestions.push('A reviewer must decide the route refund because the deviation exceeds the automatic-ruling limit; more model confidence cannot waive that policy limit.');
+  if (evaluation.fare && !evaluation.fare.reconciled) suggestions.push('A source fare comparison with unchanged non-surge components and reconciled quote/charge totals would establish the refundable surge differential.');
   if (evaluation.noShow && !evaluation.noShow.accuracyPresent) {
     suggestions.push(
       'GPS samples that include a reported accuracy radius would allow a pickup-zone determination.',

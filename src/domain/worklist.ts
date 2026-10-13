@@ -98,6 +98,7 @@ export interface WorklistSummary {
 const CATEGORY_LABELS: Record<Category, string> = {
   no_show_charge: 'No-show / cancellation charge',
   route_overcharge: 'Route deviation / overcharge',
+  fare_dispute: 'Fare / surge-price dispute',
   damage: 'Damage charge',
 };
 

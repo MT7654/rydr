@@ -16,6 +16,7 @@ const ACTOR_LABELS: Record<string, string> = {
 const CATEGORY_LABELS: Record<string, string> = {
   no_show_charge: 'No-show / cancellation charge',
   route_overcharge: 'Route deviation / overcharge',
+  fare_dispute: 'Fare / surge-price dispute',
   damage: 'Damage charge',
 };
 

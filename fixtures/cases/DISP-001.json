@@ -1,0 +1,639 @@
+{
+  "id": "DISP-001",
+  "version": 1,
+  "category": "route_overcharge",
+  "currency": "SGD",
+  "disputedCents": 650,
+  "riderStatement": "The driver took a significantly longer route from Orchard Central to Changi Airport T3. I normally take the PIE which takes about 35 minutes and costs around $28. On this trip the driver went through Geylang and East Coast area, taking 37 minutes and the fare was $35. The driver did not inform me about any route change or traffic. The extra distance was 4.3 km and I was overcharged. I am requesting a refund of the excess fare.",
+  "driverStatement": null,
+  "trip": {
+    "id": "TRIP-2026-09871",
+    "scheduledAt": "2026-09-12T13:15:00+08:00",
+    "pickup": {
+      "label": "Orchard Central",
+      "lat": 1.3048,
+      "lng": 103.8318
+    },
+    "dropoff": {
+      "label": "Changi Airport T3",
+      "lat": 1.3644,
+      "lng": 103.9915
+    }
+  },
+  "evidence": [
+    {
+      "id": "DISP001-GPS-01",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:15:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/0",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.3048,
+        "lng": 103.8318,
+        "accuracyMeters": null,
+        "speedKmh": 0,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-02",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:17:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/1",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.3065,
+        "lng": 103.836,
+        "accuracyMeters": null,
+        "speedKmh": 35,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-03",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:19:30+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/2",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.302,
+        "lng": 103.844,
+        "accuracyMeters": null,
+        "speedKmh": 40,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-04",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:22:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/3",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.2975,
+        "lng": 103.853,
+        "accuracyMeters": null,
+        "speedKmh": 35,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-05",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:24:30+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/4",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.2935,
+        "lng": 103.862,
+        "accuracyMeters": null,
+        "speedKmh": 45,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-06",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:27:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/5",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.29,
+        "lng": 103.871,
+        "accuracyMeters": null,
+        "speedKmh": 50,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-07",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:29:30+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/6",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.3,
+        "lng": 103.878,
+        "accuracyMeters": null,
+        "speedKmh": 38,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-08",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:32:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/7",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.3065,
+        "lng": 103.885,
+        "accuracyMeters": null,
+        "speedKmh": 42,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-09",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:34:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/8",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.31,
+        "lng": 103.8905,
+        "accuracyMeters": null,
+        "speedKmh": 40,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-10",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:36:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/9",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.3125,
+        "lng": 103.896,
+        "accuracyMeters": null,
+        "speedKmh": 55,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-11",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:38:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/10",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.316,
+        "lng": 103.905,
+        "accuracyMeters": null,
+        "speedKmh": 70,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-12",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:41:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/11",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.3225,
+        "lng": 103.92,
+        "accuracyMeters": null,
+        "speedKmh": 75,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-13",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:44:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/12",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.335,
+        "lng": 103.945,
+        "accuracyMeters": null,
+        "speedKmh": 65,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-14",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:47:30+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/13",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.35,
+        "lng": 103.97,
+        "accuracyMeters": null,
+        "speedKmh": 60,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-15",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:50:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/14",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.358,
+        "lng": 103.983,
+        "accuracyMeters": null,
+        "speedKmh": 40,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-GPS-16",
+      "kind": "gps",
+      "timestamp": "2026-09-12T13:52:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/gps_telemetry/15",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.3644,
+        "lng": 103.9915,
+        "accuracyMeters": null,
+        "speedKmh": 0,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP001-CHAT-17",
+      "kind": "chat",
+      "timestamp": "2026-09-12T13:08:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/chat_logs/0",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "sender": "rider",
+        "type": "message",
+        "content": "Hi! I'm at the Orchard Central main entrance, wearing a blue dress. White Toyota Vios right?"
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-CHAT-18",
+      "kind": "chat",
+      "timestamp": "2026-09-12T13:09:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/chat_logs/1",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "sender": "driver",
+        "type": "message",
+        "content": "Yes that's me! I can see you, coming now. 1 min."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-CHAT-19",
+      "kind": "chat",
+      "timestamp": "2026-09-12T13:10:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/chat_logs/2",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "sender": "rider",
+        "type": "message",
+        "content": "Great thanks! Heading to Changi T3, my flight is at 3:30pm."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-CHAT-20",
+      "kind": "chat",
+      "timestamp": "2026-09-12T13:10:30+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/chat_logs/3",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "sender": "driver",
+        "type": "message",
+        "content": "Sure, no problem. We will get there in time."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-CHAT-21",
+      "kind": "chat",
+      "timestamp": "2026-09-12T13:24:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/chat_logs/4",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "sender": "rider",
+        "type": "message",
+        "content": "Hey, are we going the right way? This doesn't look like the usual route to the airport."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-CHAT-22",
+      "kind": "chat",
+      "timestamp": "2026-09-12T13:25:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/chat_logs/5",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "sender": "driver",
+        "type": "message",
+        "content": "Don't worry, I know the way. We will reach on time."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-TRIP_EVENT-23",
+      "kind": "trip_event",
+      "timestamp": "2026-09-12T13:15:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/trip_data/start_time",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "eventType": "trip_started",
+        "details": "Recorded trip start."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-TRIP_EVENT-24",
+      "kind": "trip_event",
+      "timestamp": "2026-09-12T13:52:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/trip_data/end_time",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "eventType": "trip_completed",
+        "details": "Recorded trip completion."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-HISTORY-25",
+      "kind": "history",
+      "timestamp": null,
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/rider_profile",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "subject": "rider",
+        "avgRating": 4.8,
+        "totalTrips": 187,
+        "disputeCount": 2,
+        "fraudFlags": 0,
+        "note": null
+      },
+      "qualityIssues": [
+        "Account history never establishes trip liability; routing only."
+      ]
+    },
+    {
+      "id": "DISP001-HISTORY-26",
+      "kind": "history",
+      "timestamp": null,
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/driver_profile",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "subject": "driver",
+        "avgRating": 4.7,
+        "totalTrips": 2143,
+        "disputeCount": 3,
+        "fraudFlags": 0,
+        "note": null
+      },
+      "qualityIssues": [
+        "Account history never establishes trip liability; routing only."
+      ]
+    },
+    {
+      "id": "DISP001-TRIP_EVENT-27",
+      "kind": "trip_event",
+      "timestamp": "2026-09-12T13:05:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/traffic_conditions/0",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "eventType": "traffic_report",
+        "details": "PIE (Pan-Island Expressway); vehicle_fire; severity high; clear time 2026-09-12T13:50:00+08:00. Vehicle fire on PIE eastbound between Paya Lebar and Hougang. Lanes 1 and 2 blocked. Heavy congestion and long delays reported from 13:05."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-TRIP_EVENT-28",
+      "kind": "trip_event",
+      "timestamp": "2026-09-12T13:15:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/traffic_conditions/1",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "eventType": "traffic_report",
+        "details": "PIE exit ramp — Changi Airport exit; heavy_congestion; severity moderate; clear time 2026-09-12T13:40:00+08:00. Heavy congestion on PIE near the airport exit, likely a secondary effect of the vehicle fire upstream."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-TRIP_EVENT-29",
+      "kind": "trip_event",
+      "timestamp": "2026-09-12T13:30:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/traffic_conditions/2",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "eventType": "traffic_report",
+        "details": "ECP (East Coast Parkway); traffic_flow; severity low; clear time not supplied. ECP eastbound flowing smoothly. No incidents. The driver's reroute through ECP was a reasonable alternative given PIE conditions."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-ROUTE-30",
+      "kind": "route",
+      "timestamp": "2026-09-12T13:15:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/trip_data",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "plannedDistanceM": 20500,
+        "actualDistanceM": 24800,
+        "gpsSegmentSumM": null,
+        "justification": "verified_justification",
+        "justificationNote": "Supplied historical incident reports overlap the trip on the recommended PIE route. Chat contains no proactive deviation notice or traffic explanation; no call recording is supplied. GPS chord sums are not road-route lengths.",
+        "notificationStatus": "not_informed",
+        "fareTotals": {
+          "quotedCents": 2850,
+          "chargedCents": 3500,
+          "excessDistanceCents": 344,
+          "excessTollsCents": 222
+        }
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-TRIP_EVENT-31",
+      "kind": "trip_event",
+      "timestamp": "2026-09-12T13:15:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/optimal_route",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "eventType": "recommended_route",
+        "details": "{\"route_name\":\"PIE (Pan-Island Expressway) — direct route\",\"total_waypoints\":10,\"estimated_distance_km\":20.5,\"estimated_duration_min\":35,\"waypoints\":[{\"point\":1,\"lat\":1.3048,\"lng\":103.8318,\"location_desc\":\"Orchard Central (pickup)\"},{\"point\":2,\"lat\":1.312,\"lng\":103.836,\"location_desc\":\"Scotts Rd to PIE (Cairnhill) slip road\"},{\"point\":3,\"lat\":1.3185,\"lng\":103.841,\"location_desc\":\"PIE entry (near Newton)\"},{\"point\":4,\"lat\":1.324,\"lng\":103.855,\"location_desc\":\"PIE eastbound near Balestier\"},{\"point\":5,\"lat\":1.326,\"lng\":103.872,\"location_desc\":\"PIE near Kallang / Paya Lebar\"},{\"point\":6,\"lat\":1.328,\"lng\":103.894,\"location_desc\":\"PIE near Eunos / Ubi\"},{\"point\":7,\"lat\":1.33,\"lng\":103.916,\"location_desc\":\"PIE near Bedok Reservoir\"},{\"point\":8,\"lat\":1.334,\"lng\":103.945,\"location_desc\":\"PIE near Bedok North\"},{\"point\":9,\"lat\":1.342,\"lng\":103.968,\"location_desc\":\"PIE near Upper Changi\"},{\"point\":10,\"lat\":1.3644,\"lng\":103.9915,\"location_desc\":\"Changi Airport T3 (dropoff via PIE Exit 2)\"}],\"notes\":\"This is the system-recommended route via PIE. It is the most direct path from Orchard to Changi Airport T3 under normal traffic conditions. The driver instead took a route through the CBD, Nicoll Highway, Geylang/Old Airport Road, and ECP, adding 4.3 km.\"}"
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-PAYMENT-32",
+      "kind": "payment",
+      "timestamp": "2026-09-12T13:15:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/trip_data/estimated_fare",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "component": "upfront_quote",
+        "amountCents": 2850,
+        "direction": "charge",
+        "method": "credit_card",
+        "status": "pending"
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP001-PAYMENT-33",
+      "kind": "payment",
+      "timestamp": "2026-09-12T13:52:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-001.source.json",
+        "jsonPointer": "/trip_data/actual_fare",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "component": "final_fare",
+        "amountCents": 3500,
+        "direction": "charge",
+        "method": "credit_card",
+        "status": "applied"
+      },
+      "qualityIssues": []
+    }
+  ],
+  "policyVersion": "ryde-hackathon-policy-v2.1",
+  "suppliedPolicyId": "ryde-hackathon-policy-v2.1",
+  "provenance": "supplied_sample",
+  "derivedFrom": null,
+  "changeLog": []
+}

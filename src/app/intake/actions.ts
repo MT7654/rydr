@@ -203,6 +203,15 @@ function buildEvidence(formData: FormData, caseId: string): EvidenceItem[] {
     });
   }
 
+  if (field(formData, 'category') === 'fare_dispute') {
+    const bool = (name: string) => field(formData, name) === 'yes' ? true : field(formData, name) === 'no' ? false : null;
+    const cents = (name: string) => decimalToCents(Number(field(formData, name)));
+    const quotedCents = cents('surge_quote'), chargedCents = cents('surge_actual');
+    const source = { dataset: `intake:${caseId}`, jsonPointer: '/evidence/surgeComparison', provenance: 'synthetic' as const };
+    const timestamp = singaporeTime(optional(formData, 'scheduledAt'));
+    push({ id: `${caseId}-SURGE`, kind: 'fare', timestamp, source, qualityIssues: ['Entered source values require verification; typed values do not certify source authenticity.'], payload: { quotedCents, chargedCents, surgeableSubtotalCents: cents('surge_subtotal'), fixedFeeCents: cents('surge_fixed'), quoteMultiplier: Number(field(formData, 'surge_quote_multiplier')), startMultiplier: Number(field(formData, 'surge_start_multiplier')), notifiedBeforePickup: bool('surge_notified'), noticeIncludesFareAndFreeCancellation: bool('surge_complete_notice'), otherComponentsUnchanged: bool('surge_unchanged') } });
+    for (const [component, amountCents] of [['upfront_quote', quotedCents], ['final_fare', chargedCents]] as const) push({ id: `${caseId}-${component}`, kind: 'payment', timestamp, source, qualityIssues: [], payload: { component, amountCents, direction: 'charge', method: 'intake source record', status: component === 'final_fare' ? 'applied' : 'pending' } });
+  }
   return evidence;
 }
 
@@ -238,6 +247,7 @@ export async function submitIntake(formData: FormData): Promise<void> {
   const packs = await loadPolicyPacks();
   const pack = packs.get(policyVersion);
   if (!pack) fail(caseId, `Unknown policy pack: ${policyVersion}.`);
+  if (category === 'fare_dispute' && pack.source !== 'hackathon_reference') fail(caseId, 'Choose the supplied v2.1 policy for a fare / surge-price dispute.');
   if (pack.source === 'supplied_sample') {
     fail(
       caseId,
@@ -265,7 +275,7 @@ export async function submitIntake(formData: FormData): Promise<void> {
 
   const draft = {
     id: caseId,
-    category: category === 'damage' ? 'damage' : category === 'route_overcharge' ? 'route_overcharge' : 'no_show_charge',
+    category: category === 'damage' ? 'damage' : category === 'fare_dispute' ? 'fare_dispute' : category === 'route_overcharge' ? 'route_overcharge' : 'no_show_charge',
     currency: 'SGD',
     disputedCents,
     riderStatement,

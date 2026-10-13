@@ -51,6 +51,7 @@ export function scoreEvidence(
   const primaryRoute = routeItems[0] ?? null;
   const isNoShow = caseRecord.category === 'no_show_charge';
   const isDamage = caseRecord.category === 'damage';
+  const isFare = caseRecord.category === 'fare_dispute';
   const images = evidenceOfKind(caseRecord.evidence, 'image');
 
   const completeness: Check[] = [
@@ -63,9 +64,9 @@ export function scoreEvidence(
     { id: 'scheduled', label: 'Scheduled pickup time present', weight: FIVE, passed: caseRecord.trip.scheduledAt !== null },
     {
       id: 'category_core',
-      label: isDamage ? 'Image evidence present' : isNoShow ? 'Arrival event present' : 'Route evidence present',
+      label: isFare ? 'Quote and surge record present' : isDamage ? 'Image evidence present' : isNoShow ? 'Arrival event present' : 'Route evidence present',
       weight: FIVE,
-      passed: isDamage ? images.length > 0 : isNoShow ? arrival !== null : primaryRoute !== null,
+      passed: isFare ? kinds.has('fare') : isDamage ? images.length > 0 : isNoShow ? arrival !== null : primaryRoute !== null,
     },
   ];
 
@@ -86,11 +87,16 @@ export function scoreEvidence(
   const consistency: Check[] = [
     { id: 'no_clock_conflict', label: 'No material timestamp conflict', weight: FIVE, passed: evaluation.noShow?.materialStartConflict !== true },
     { id: 'continuity', label: 'Sampling continuity within limit', weight: FIVE, passed: !gapOverLimit },
-    { id: 'ledger', label: 'No fare ledger inconsistency', weight: FIVE, passed: evaluation.route?.ledgerReconciled !== false },
+    { id: 'ledger', label: 'No fare ledger inconsistency', weight: FIVE, passed: evaluation.route?.ledgerReconciled !== false && evaluation.fare?.reconciled !== false },
     { id: 'unique_ids', label: 'Evidence IDs are unique', weight: FIVE, passed: !duplicateIds },
   ];
 
-  const measurement: Check[] = isDamage ? [
+  const measurement: Check[] = isFare ? [
+    { id: 'quote', label: 'Quote amount supplied', weight: FIVE, passed: evaluation.fare != null },
+    { id: 'surge', label: 'Surge totals reconcile', weight: FIVE, passed: evaluation.fare?.reconciled === true },
+    { id: 'notification', label: 'Notification status recorded', weight: FIVE, passed: evaluation.fare?.notified != null },
+    { id: 'differential', label: 'Surge differential identified', weight: FIVE, passed: evaluation.fare?.differentialCents != null },
+  ] : isDamage ? [
     { id: 'image_hashes', label: 'Image content hashes recorded (file identity only)', weight: FIVE, passed: images.length > 0 && images.every(i => /^[a-f0-9]{64}$/.test(i.payload.hash)) },
     { id: 'multi_angle', label: 'At least three distinct submitted views', weight: FIVE, passed: new Set(images.flatMap(i => i.payload.angles)).size >= 3 },
     { id: 'image_context', label: 'Context sufficiency recorded as adequate', weight: FIVE, passed: images.length > 0 && images.every(i => i.payload.sufficiency === 'adequate') },
@@ -153,6 +159,10 @@ export function applyEscalationGate(input: EscalationInput): EscalationResult {
   const hardBlockers: string[] = [];
   if (input.caseRecord.category === 'damage') hardBlockers.push('Damage liability requires human approval; images cannot establish causation.');
   const reviewOnlyReasons: string[] = [];
+  const routeLimit = input.thresholds.referenceRules?.routeAutoMaxMeters;
+  if (routeLimit !== undefined && (input.evaluation.route?.comparison.excessMeters ?? 0) > routeLimit) {
+    hardBlockers.push(`policy_required_review: Section 6.2 requires a reviewer above ${routeLimit} m route deviation; confidence cannot waive this limit.`);
+  }
 
   const safety = screenSafetyAllegations(input.caseRecord);
   if (safety.length > 0) {
@@ -163,7 +173,7 @@ export function applyEscalationGate(input: EscalationInput): EscalationResult {
 
   if (input.evaluation.noShow?.policyAmbiguity) {
     hardBlockers.push(
-      'Ambiguous governing policy: the supplied sample policy does not define which clock governs the waiting period.',
+      input.thresholds.referenceRules ? 'Conflicting supplied policy sources require a precedence decision before an automatic ruling.' : 'Ambiguous governing policy: the supplied sample policy does not define which clock governs the waiting period.',
     );
   }
   if (input.evaluation.noShow?.materialStartConflict) {
@@ -176,7 +186,7 @@ export function applyEscalationGate(input: EscalationInput): EscalationResult {
       `Disputed amount exceeds the ${input.thresholds.highValueCents} cent high-value review threshold.`,
     );
   }
-  if (input.evaluation.route?.ledgerReconciled === false) {
+  if (input.evaluation.route?.ledgerReconciled === false || input.evaluation.fare?.reconciled === false) {
     hardBlockers.push('Inconsistent money: the fare ledger does not reconcile.');
   }
   if (input.agentOutputInvalid) {
@@ -200,9 +210,14 @@ export function applyEscalationGate(input: EscalationInput): EscalationResult {
       `Evidence quality score ${input.quality.total.toFixed(2)} is below the ${input.thresholds.qualityReviewFloor} review floor.`,
     );
   }
-  if (input.judgeConfidence < input.thresholds.judgeConfidenceFloor) {
+  const rules = input.thresholds.referenceRules;
+  let confidenceFloor = input.thresholds.judgeConfidenceFloor;
+  if (rules && input.caseRecord.category === 'route_overcharge') confidenceFloor = rules.routeConfidenceFloor;
+  if (rules && input.caseRecord.category === 'fare_dispute' && input.caseRecord.disputedCents >= rules.mediumValueFromCents) confidenceFloor = rules.mediumValueConfidenceFloor;
+  if (rules && evidenceOfKind(input.caseRecord.evidence, 'history').some(e => (e.payload.fraudFlags ?? 0) >= 1)) confidenceFloor = Math.max(confidenceFloor, rules.riskConfidenceFloor);
+  if (input.judgeConfidence < confidenceFloor) {
     hardBlockers.push(
-      `Judge model confidence ${input.judgeConfidence.toFixed(2)} is below the ${input.thresholds.judgeConfidenceFloor} floor.`,
+      `Judge model confidence ${input.judgeConfidence.toFixed(2)} is below the ${confidenceFloor} floor.`,
     );
   }
 

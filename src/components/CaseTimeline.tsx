@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { EvidenceItem } from '@/domain/contracts';
 import { Cite } from './Cite';
 
-const labels: Record<string,string> = { gps:'Location', chat:'Message', call:'Call', trip_event:'Trip event', payment:'Payment', route:'Route', history:'Account history', image:'Photo' };
+const labels: Record<string,string> = { gps:'Location', chat:'Message', call:'Call', trip_event:'Trip event', payment:'Payment', route:'Route', fare:'Fare comparison', history:'Account history', image:'Photo' };
 function description(item: EvidenceItem): string {
   switch(item.kind) {
     case 'gps': return `${item.payload.status?.replace(/_/g,' ') ?? 'Location sample'} · accuracy ${item.payload.accuracyMeters == null ? 'unknown' : `±${item.payload.accuracyMeters} m`}`;
@@ -12,6 +12,7 @@ function description(item: EvidenceItem): string {
     case 'trip_event': return item.payload.details;
     case 'payment': return `${item.payload.component.replace(/_/g,' ')} · SGD ${(item.payload.amountCents/100).toFixed(2)}`;
     case 'route': return `Planned ${item.payload.plannedDistanceM ?? 'unknown'} m · travelled ${item.payload.actualDistanceM ?? 'unknown'} m`;
+    case 'fare': return `Quote S$${(item.payload.quotedCents/100).toFixed(2)} → charged S$${(item.payload.chargedCents/100).toFixed(2)} · surge ${item.payload.quoteMultiplier}× → ${item.payload.startMultiplier}×`;
     case 'image': return 'Photo supplied for the damage assessment';
     case 'history': return 'Context record; past behaviour does not prove this incident';
   }

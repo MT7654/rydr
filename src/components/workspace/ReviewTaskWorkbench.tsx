@@ -91,7 +91,9 @@ export function ReviewTaskWorkbench({
   const reviewComplete = historical || ['decided', 'closed_unresolved'].includes(task.status);
   const routing = task.routing;
   const lane: QueueLane = routing?.lane ?? 'standard';
-  const escalation = classifyEscalation(task.reasonCodes);
+  const routeLimit = packet.pack.source === 'hackathon_reference' ? packet.pack.thresholds.referenceRules?.routeAutoMaxMeters : undefined;
+  const policyRequiredReview = task.kind === 'automatic_escalation' && routeLimit !== undefined && (evaluation.route?.comparison.excessMeters ?? 0) > routeLimit;
+  const escalation = classifyEscalation([...task.reasonCodes, ...(policyRequiredReview ? ['policy_required_review'] : [])]);
   const now = Date.now();
   const overdue = routing ? isOverdue(routing.dueAt, now) : false;
   const isAppeal = task.kind === 'appeal';
@@ -108,13 +110,13 @@ export function ReviewTaskWorkbench({
           </div>
         </div>
         <p className="small muted" style={{ margin: 0 }}>
-          {caseRecord.category === 'damage' ? 'Damage charge' : caseRecord.category === 'no_show_charge' ? 'No-show charge' : 'Route charge'} · disputed {formatSgd(caseRecord.disputedCents)} ·
+          {caseRecord.category === 'damage' ? 'Damage charge' : caseRecord.category === 'fare_dispute' ? 'Fare dispute' : caseRecord.category === 'no_show_charge' ? 'No-show charge' : 'Route charge'} · disputed {formatSgd(caseRecord.disputedCents)} ·
           case v{task.caseVersion} · owner {task.assigneeId ? DEMO_REVIEWER_NAME : 'unassigned'} ·
           {reviewComplete ? ' review complete' : ' reviewer workspace'}
         </p>
         <p style={{ margin: '0.6rem 0 0' }}>
           <strong>{reviewComplete ? 'Original reason for human review:' : 'Why this is with a reviewer:'}</strong>{' '}
-          {displayText(task.reasonSummary)}
+          {policyRequiredReview ? `Section 6.2 requires a human decision because this deviation exceeds ${routeLimit} m. The recorded evidence includes calculated refund eligibility; a reviewer must decide before an award is posted.` : displayText(task.reasonSummary)}
         </p>
 
         {reviewComplete ? (

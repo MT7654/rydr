@@ -83,7 +83,7 @@ describe('fixture runs complete end to end', () => {
     expect(run.resolution?.disposition).toBe('human_review');
     expect(run.resolution?.requiresHumanReview).toBe(true);
     expect(run.resolution?.recommendedRefundCents).toBeNull();
-    expect(run.resolution?.escalationReasons.join(' ')).toContain('supplied sample policy');
+    expect(run.resolution?.escalationReasons.join(' ')).toContain('supplied policy sources');
   });
 
   it('keeps history out of every liability-agent context', async () => {

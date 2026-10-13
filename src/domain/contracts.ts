@@ -27,7 +27,7 @@ export const CentsSchema = z
 export const LatitudeSchema = z.number().min(-90).max(90);
 export const LongitudeSchema = z.number().min(-180).max(180);
 
-export const CategorySchema = z.enum(['no_show_charge', 'route_overcharge', 'damage']);
+export const CategorySchema = z.enum(['no_show_charge', 'route_overcharge', 'fare_dispute', 'damage']);
 export type Category = z.infer<typeof CategorySchema>;
 
 export const ExecutionModeSchema = z.enum(['fixture', 'live', 'replay']);
@@ -43,6 +43,7 @@ export const EvidenceKindSchema = z.enum([
   'trip_event',
   'payment',
   'route',
+  'fare',
   'history',
   'image',
 ]);
@@ -123,6 +124,8 @@ export const PaymentPayloadSchema = z.object({
 });
 
 export const RoutePayloadSchema = z.object({
+  notificationStatus: z.enum(['agreed', 'not_informed', 'unknown']).optional(),
+  fareTotals: z.object({ quotedCents: CentsSchema, chargedCents: CentsSchema, excessDistanceCents: CentsSchema, excessTollsCents: CentsSchema }).optional(),
   plannedDistanceM: z.number().nonnegative().nullable(),
   actualDistanceM: z.number().nonnegative().nullable(),
   gpsSegmentSumM: z.number().nonnegative().nullable(),
@@ -132,6 +135,18 @@ export const RoutePayloadSchema = z.object({
     'unknown',
   ]),
   justificationNote: z.string().nullable(),
+});
+
+export const FarePayloadSchema = z.object({
+  quotedCents: CentsSchema,
+  chargedCents: CentsSchema,
+  surgeableSubtotalCents: CentsSchema,
+  fixedFeeCents: CentsSchema,
+  quoteMultiplier: z.number().positive(),
+  startMultiplier: z.number().positive(),
+  notifiedBeforePickup: z.boolean().nullable(),
+  noticeIncludesFareAndFreeCancellation: z.boolean().nullable(),
+  otherComponentsUnchanged: z.boolean().nullable(),
 });
 
 /**
@@ -225,6 +240,7 @@ export const EvidenceItemSchema = z.discriminatedUnion('kind', [
     payload: PaymentPayloadSchema,
   }),
   z.object({ ...evidenceBase, kind: z.literal('route'), payload: RoutePayloadSchema }),
+  z.object({ ...evidenceBase, kind: z.literal('fare'), payload: FarePayloadSchema }),
   z.object({
     ...evidenceBase,
     kind: z.literal('history'),
@@ -257,7 +273,7 @@ export const PolicyClauseSchema = z.object({
   category: CategorySchema,
   title: z.string().min(1),
   text: z.string().min(1),
-  authority: z.enum(['official_ryde', 'rydr_safeguard', 'demo']).optional(),
+  authority: z.enum(['official_ryde', 'rydr_safeguard', 'demo', 'hackathon_reference']).optional(),
   sourceUrl: z.string().url().refine(url => {
     const host = new URL(url).hostname;
     return new URL(url).protocol === 'https:' && (host === 'rydesharing.com' || host === 'help.rydesharing.com');
@@ -276,6 +292,13 @@ export const PolicyThresholdsSchema = z.object({
   highValueCents: z.number().positive(),
   qualityReviewFloor: z.number().min(0).max(1),
   judgeConfidenceFloor: z.number().min(0).max(1),
+  referenceRules: z.object({
+    routeAutoMaxMeters: z.number().positive(),
+    routeConfidenceFloor: z.number().min(0).max(1),
+    mediumValueFromCents: CentsSchema,
+    mediumValueConfidenceFloor: z.number().min(0).max(1),
+    riskConfidenceFloor: z.number().min(0).max(1),
+  }).optional(),
 });
 export type PolicyThresholds = z.infer<typeof PolicyThresholdsSchema>;
 
@@ -295,6 +318,15 @@ const packIdentity = {
  *    from prototype safeguards, with explicit scope and retrieval metadata.
  */
 export const PolicyPackSchema = z.discriminatedUnion('source', [
+  z.object({
+    ...packIdentity,
+    source: z.literal('hackathon_reference'),
+    thresholds: PolicyThresholdsSchema,
+    effectiveFrom: z.string().date(),
+    provenanceDocument: z.string().min(1),
+    applicability: z.string().min(1),
+    unresolved: z.array(z.string()),
+  }),
   z.object({
     ...packIdentity,
     source: z.literal('rydr_demo'),
@@ -829,6 +861,9 @@ export const NoShowEvaluationSchema = z.object({
 });
 
 export const RouteEvaluationSchema = z.object({
+  ledgerBasis: z.literal('aggregate_totals').optional(),
+  notificationStatus: z.enum(['agreed', 'not_informed', 'unknown']).optional(),
+  eligibleRefundCents: CentsSchema.nullable().optional(),
   comparison: RouteComparisonSchema,
   justification: z.enum(['verified_justification', 'verified_no_justification', 'unknown']),
   ledgerReconciled: z.boolean(),
@@ -837,6 +872,7 @@ export const RouteEvaluationSchema = z.object({
 });
 
 export const DeterministicEvaluationSchema = z.object({
+  fare: z.object({ quotedCents: CentsSchema, chargedCents: CentsSchema, differentialCents: z.number().int().nullable(), quoteMultiplier: z.number().positive(), startMultiplier: z.number().positive(), fixedFeeCents: CentsSchema, notified: z.boolean().nullable(), reconciled: z.boolean() }).nullable().optional(),
   caseId: z.string().min(1),
   caseVersion: z.number().int().positive(),
   category: CategorySchema,

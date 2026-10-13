@@ -1,0 +1,36 @@
+{
+  "id": "DISP-2026-0211",
+  "caseId": "DISP-2026-0211",
+  "caseVersion": 1,
+  "category": "no_show_charge",
+  "policyId": "ryde-hackathon-policy-v2.1",
+  "policyVersion": "2.1",
+  "citedPolicyIds": [
+    "REF-2.3"
+  ],
+  "tags": [
+    "zone_inside",
+    "threshold_met",
+    "contact_none"
+  ],
+  "materialFacts": [
+    "Driver waited six minutes; no message and no call before cancellation.",
+    "Cancellation fee voided because both contact obligations were not met."
+  ],
+  "disposition": "refund",
+  "refundCents": 500,
+  "chargeCents": 500,
+  "status": "approved",
+  "source": "organizer_reference",
+  "priorRecommendation": null,
+  "correctionReason": null,
+  "approvedBy": "Supplied reference Section 7 (not independently audited)",
+  "approvedAt": "2026-05-18T00:00:00+08:00",
+  "approvalNote": "Reference example supplied in the policy. It does not override current evidence, eligibility, amount, or escalation limits.",
+  "activationFailure": null,
+  "retiredAt": null,
+  "retiredReason": null,
+  "supersedesPrecedentId": null,
+  "createdAt": "2026-05-18T00:00:00+08:00",
+  "updatedAt": "2026-05-18T00:00:00+08:00"
+}

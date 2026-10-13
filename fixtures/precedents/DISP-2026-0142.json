@@ -1,0 +1,37 @@
+{
+  "id": "DISP-2026-0142",
+  "caseId": "DISP-2026-0142",
+  "caseVersion": 1,
+  "category": "fare_dispute",
+  "policyId": "ryde-hackathon-policy-v2.1",
+  "policyVersion": "2.1",
+  "citedPolicyIds": [
+    "REF-3.3",
+    "REF-3.4"
+  ],
+  "tags": [
+    "surge_increased",
+    "notice_absent",
+    "fare_reconciled"
+  ],
+  "materialFacts": [
+    "Quote S$9.50 at 1.0×; charged S$12.70 at 1.4×.",
+    "S$3.20 difference entirely attributable to surge; no notification."
+  ],
+  "disposition": "refund",
+  "refundCents": 320,
+  "chargeCents": 320,
+  "status": "approved",
+  "source": "organizer_reference",
+  "priorRecommendation": null,
+  "correctionReason": null,
+  "approvedBy": "Supplied reference Section 7 (not independently audited)",
+  "approvedAt": "2026-04-03T00:00:00+08:00",
+  "approvalNote": "Reference example supplied in the policy. It does not override current evidence, eligibility, amount, or escalation limits.",
+  "activationFailure": null,
+  "retiredAt": null,
+  "retiredReason": null,
+  "supersedesPrecedentId": null,
+  "createdAt": "2026-04-03T00:00:00+08:00",
+  "updatedAt": "2026-04-03T00:00:00+08:00"
+}

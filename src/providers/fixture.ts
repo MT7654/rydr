@@ -40,7 +40,7 @@ function selectEvidence(
   input: { catalog: { id: string; kind: string }[]; policyIds: string[] },
   category: 'no_show_charge' | 'route_overcharge' | string,
 ): { evidenceIds: string[]; reasonSummary: string } {
-  const wanted = category === 'route_overcharge' ? ROUTE_KINDS : NO_SHOW_KINDS;
+  const wanted = category === 'fare_dispute' ? new Set(['fare', 'payment', 'trip_event', 'chat']) : category === 'route_overcharge' ? ROUTE_KINDS : NO_SHOW_KINDS;
   const evidenceIds = input.catalog
     .filter((entry) => wanted.has(entry.kind))
     .map((entry) => entry.id);
@@ -136,7 +136,7 @@ function buildJudge(
 
 export interface FixtureProviderContext {
   evaluation?: DeterministicEvaluation | null;
-  category?: 'no_show_charge' | 'route_overcharge' | 'damage';
+  category?: 'no_show_charge' | 'route_overcharge' | 'fare_dispute' | 'damage';
 }
 
 export function createFixtureProvider(

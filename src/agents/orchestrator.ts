@@ -165,7 +165,7 @@ async function prepare(caseId: string): Promise<PreparedRun> {
   const quality = scoreEvidence(caseRecord, evaluation, pack.thresholds);
   const catalog = await enrichImageCatalog(caseRecord.id,caseRecord.version,buildCatalog(caseRecord));
   const bundle = buildDeterministicBundle(caseRecord, evaluation, quality);
-  const clauses = toClauseRefs(pack.clauses.filter((c) => c.category === caseRecord.category));
+  const clauses = toClauseRefs(pack.clauses.filter((c) => c.category === caseRecord.category || evaluation.policyIds.includes(c.id) || (c.authority === 'hackathon_reference' && /^REF-[56]\./.test(c.id))));
   return {
     caseRecord,
     pack,

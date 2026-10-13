@@ -41,6 +41,8 @@ export function summarizeEvidence(item: EvidenceItem, pickup: { lat: number; lng
       return `Payment line at ${when}: ${item.payload.component} ${item.payload.amountCents} cents (${item.payload.direction}, ${item.payload.status}).`;
     case 'route':
       return `Route record at ${when}: planned ${item.payload.plannedDistanceM ?? '?'} m, actual ${item.payload.actualDistanceM ?? '?'} m, justification ${item.payload.justification}. ${item.payload.justificationNote ?? ''}`;
+    case 'fare':
+      return `Fare comparison: quote ${item.payload.quotedCents} cents at ${item.payload.quoteMultiplier}x, actual ${item.payload.chargedCents} cents at ${item.payload.startMultiplier}x; surgeable subtotal ${item.payload.surgeableSubtotalCents} cents; fixed fee ${item.payload.fixedFeeCents} cents. Pre-pickup notification: ${item.payload.notifiedBeforePickup}; other components unchanged: ${item.payload.otherComponentsUnchanged}.`;
     case 'history':
       return `Account history (${item.payload.subject}): rating ${item.payload.avgRating ?? '?'}, trips ${item.payload.totalTrips ?? '?'}, disputes ${item.payload.disputeCount ?? '?'}, risk flags ${item.payload.fraudFlags ?? '?'}.`;
     case 'image':

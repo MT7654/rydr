@@ -248,6 +248,7 @@ function IntakeForm() {
               >
                 <option value="no_show_charge">A no-show or cancellation fee</option>
                 <option value="route_overcharge">A route deviation or overcharge</option>
+                <option value="fare_dispute">A fare or surge-price difference</option>
                 <option value="damage">A damage charge (human approval required)</option>
               </select>
             </label>
@@ -265,7 +266,8 @@ function IntakeForm() {
             </label>
             <label className="field">
               <span className="field__label">Governing policy</span>
-              <select name="policyVersion" className="input" defaultValue="rydr-demo-policy-v1">
+              <select name="policyVersion" className="input" key={category} defaultValue={category === 'fare_dispute' ? 'ryde-hackathon-policy-v2.1' : 'rydr-demo-policy-v1'}>
+                <option value="ryde-hackathon-policy-v2.1">Supplied hackathon policy v2.1 · effective January 2026</option>
                 <option value="rydr-demo-policy-v1">Rydr demo rules (original examples)</option>
                 <option value="ryde-on-demand-no-show-20261002">Ryde public policy · on-demand no-show</option>
                 <option value="ryde-advance-no-show-20261002">Ryde public policy · advance no-show</option>
@@ -492,6 +494,7 @@ function IntakeForm() {
             />
           ) : null}
 
+          {category === 'fare_dispute' ? <fieldset className="stack"><legend>Quote and surge comparison</legend><p className="small">Enter source-record values. The quote and final-fare ledger lines are created from these amounts; do not add those two lines again below.</p><div className="intake-grid">{[['surge_quote','Upfront quote (SGD)'],['surge_actual','Final charge (SGD)'],['surge_subtotal','Surgeable subtotal (SGD)'],['surge_fixed','Fixed surge-exempt fees (SGD)'],['surge_quote_multiplier','Multiplier at quote'],['surge_start_multiplier','Multiplier at pickup']].map(([name,label])=><label className="field" key={name}><span className="field__label">{label}</span><input className="input" name={name} type="number" min="0" step="0.01" required/></label>)}</div><div className="intake-grid">{[['surge_notified','Notified before pickup?'],['surge_complete_notice','Notice included fare, multiplier and free cancellation?'],['surge_unchanged','Non-surge components unchanged?']].map(([name,label])=><label className="field" key={name}><span className="field__label">{label}</span><select className="input" name={name} defaultValue="unknown"><option value="unknown">Unknown</option><option value="yes">Yes, supported by source record</option><option value="no">No, supported by source record</option></select></label>)}</div></fieldset> : null}
           <EvidenceBlock
             title="Fare components"
             hint="The fare ledger the charge is built from. A charge with no reconciling components cannot be upheld."

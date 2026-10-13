@@ -6,6 +6,7 @@ import { navigatorReady } from '@/agents/navigator';
 import { workspaceHref } from '@/domain/workspaceRoute';
 import { CitationDrawer } from '@/components/CitationDrawer';
 import { EvidenceBrief } from '@/components/EvidenceBrief';
+import { CaseVisual } from '@/components/CaseVisuals';
 import { CaseTimeline } from '@/components/CaseTimeline';
 import { PolicyBasis } from '@/components/PolicyBasis';
 import { DamageEvidencePanel } from '@/components/DamageEvidencePanel';
@@ -44,7 +45,7 @@ export function ReviewerWorkspace({data,workbench,taskOptions,notice,error,mode=
   {notice?<div className="notice notice--success" role="status">{notice}</div>:null}{error?<div className="notice notice--danger" role="alert">{error}</div>:null}
   <nav className="workspace-sections" aria-label="Case sections">{SECTIONS.map(([key,label])=><Link key={key} className="filter" aria-current={section===key?'page':undefined} href={href(key)}>{label}</Link>)}</nav>
   <div className="workspace-grid"><div className="workspace-canvas">
-  {section==='brief'?<><section className="card"><h2>What is disputed</h2><ReadableText text={record.riderStatement??'No rider statement recorded.'}/>{record.driverStatement?<details><summary>Driver account</summary><ReadableText text={record.driverStatement}/></details>:null}</section><EvidenceBrief record={record} evaluation={packet.evaluation} pack={packet.pack}/><PolicyBasis pack={packet.pack} suppliedSample={record.suppliedPolicyId!==null}/></>:null}
+  {section==='brief'?<><section className="card"><h2>What is disputed</h2><ReadableText text={record.riderStatement??'No rider statement recorded.'}/>{record.driverStatement?<details><summary>Driver account</summary><ReadableText text={record.driverStatement}/></details>:null}</section><EvidenceBrief record={record} evaluation={packet.evaluation} pack={packet.pack}/>{(record.category==='fare_dispute' || (record.category==='route_overcharge' && packet.pack.source==='hackathon_reference'))?<CaseVisual caseRecord={record} evaluation={packet.evaluation} pack={packet.pack}/>:null}<PolicyBasis pack={packet.pack} suppliedSample={record.suppliedPolicyId!==null}/></>:null}
   {section==='assessment'?<section id="assessment" className="stack">
    {packet.run&&!packet.runStaleAgainstCurrentVersion?<RunMonitor key={packet.run.id} caseId={id} runId={packet.run.id} initialRun={packet.run} findings={packet.evaluation.findings} initialCalls={packet.providerCalls}/>:<section className="card"><h2>{packet.runStaleAgainstCurrentVersion?'Assess updated evidence':'Assess both accounts'}</h2><p>Two advocates examine the records. The judge applies the governing policy and refers unresolved cases to a reviewer.</p>{!data.historical?<RunLauncher caseId={id} mode={mode} includeImages={mode==='live'&&record.category==='damage'} label={record.category==='damage'?'Collect, inspect and assess':'Collect and assess both accounts'}/>:<p>No assessment is available in this historical record.</p>}</section>}
    {packet.run?.state==='failed'&&!data.historical?<RunLauncher caseId={id} mode={mode} label="Retry assessment"/>:null}

@@ -3,6 +3,7 @@ import { PrecedentRecordSchema, type PrecedentRecord } from '../domain/precedent
 import { listJsonFiles, readJson, RUNTIME_DIR, withLock, writeJsonAtomic } from './store';
 
 const DIR = path.join(RUNTIME_DIR, 'precedents');
+const SEED_DIR = path.join(process.cwd(), 'fixtures', 'precedents');
 
 /**
  * Precedent storage. Candidates, approved examples, rejected proposals and
@@ -15,7 +16,7 @@ function file(id: string): string {
 }
 
 export async function getPrecedent(id: string): Promise<PrecedentRecord | null> {
-  const raw = await readJson<unknown>(file(id));
+  const raw = await readJson<unknown>(file(id)) ?? await readJson<unknown>(path.join(SEED_DIR, `${id}.json`));
   if (!raw) return null;
   const parsed = PrecedentRecordSchema.safeParse(raw);
   return parsed.success ? parsed.data : null;
@@ -23,6 +24,7 @@ export async function getPrecedent(id: string): Promise<PrecedentRecord | null> 
 
 export async function listPrecedents(): Promise<PrecedentRecord[]> {
   const files = await listJsonFiles(DIR);
+  const seeds = await listJsonFiles(SEED_DIR);
   const records: PrecedentRecord[] = [];
   for (const name of files) {
     if (!name.endsWith('.json')) continue;
@@ -31,7 +33,13 @@ export async function listPrecedents(): Promise<PrecedentRecord[]> {
     const parsed = PrecedentRecordSchema.safeParse(raw);
     if (parsed.success) records.push(parsed.data);
   }
-  return records.sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
+  const seeded: PrecedentRecord[] = [];
+  for (const name of seeds) {
+    const parsed = PrecedentRecordSchema.safeParse(await readJson<unknown>(path.join(SEED_DIR, name)));
+    if (parsed.success) seeded.push(parsed.data);
+  }
+  const byId = new Map([...seeded, ...records].map(record => [record.id, record]));
+  return [...byId.values()].sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
 }
 
 /**

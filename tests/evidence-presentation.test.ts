@@ -23,7 +23,7 @@ it('keeps competing clocks and unresolved evidence visible in the supplied case'
  const html=renderToStaticMarkup(React.createElement(EvidenceBrief,{record:packet.caseRecord,evaluation:packet.evaluation,pack:packet.pack}));
  expect(html).toContain('Effective clock');
  expect(html).toContain('Earliest candidate');
- expect(html).toContain('Policy threshold: 8 min.');
+ expect(html).toContain('Policy threshold: 5 min.');
  expect(html).toContain('not a final liability decision');
  for(const issue of packet.evaluation.issues) expect(html).toContain(issue.replace(/&/g,'&amp;').replace(/'/g,'&#x27;'));
  expect(html).toContain('Source 1');

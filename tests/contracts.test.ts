@@ -25,7 +25,9 @@ const SEED_IDS = [
   'SYN-013',
   'SYN-014',
   'SYN-015',
+  'DISP-001',
   'DISP-002',
+  'DISP-003',
 ];
 
 describe('contracts', () => {

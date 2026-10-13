@@ -1,0 +1,15 @@
+{
+  "comparedAt": "2026-10-14",
+  "disp002JsonIdentical": true,
+  "changedJsonPointers": [],
+  "newPolicy": "ryde-hackathon-policy-v2.1",
+  "sourcePrecedenceUnresolved": true,
+  "excludedFromRuntime": [
+    "case_metadata",
+    "recommended_ruling",
+    "evidence_summary",
+    "chat_log_analysis",
+    "traffic_analysis",
+    "markdown expected-ruling annotations"
+  ]
+}

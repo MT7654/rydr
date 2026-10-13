@@ -119,7 +119,9 @@ export async function loadSeedCases(): Promise<CaseRecord[]> {
   }
   const rawSource = await readJson<unknown>(SOURCE_FILE);
   if (rawSource) cases.push(buildDisp002Case(rawSource));
-  return cases.sort((a, b) => a.id.localeCompare(b.id));
+  const legacy = cases.find(c => c.id === 'DISP-002' && c.version === 1);
+  if (legacy) cases.push(CaseRecordSchema.parse({ ...legacy, version: 2, policyVersion: 'ryde-hackathon-policy-v2.1', suppliedPolicyId: 'ryde-hackathon-policy-v2.1', changeLog: ['14 October 2026: attached newly supplied policy v2.1. Raw DISP-002 JSON is unchanged; its embedded eight-minute rule remains a source-precedence review question.'] }));
+  return cases.sort((a, b) => a.id.localeCompare(b.id) || a.version - b.version);
 }
 
 /** One record per case: the seed fixture, or the newest runtime version of it. */
@@ -130,7 +132,7 @@ export async function getAllCases(): Promise<CaseRecord[]> {
   for (const record of seeds) byId.set(record.id, record);
   for (const record of runtime) {
     const existing = byId.get(record.id);
-    if (!existing || record.version > existing.version) byId.set(record.id, record);
+    if (!existing || record.version >= existing.version) byId.set(record.id, record);
   }
   return [...byId.values()].sort((a, b) => a.id.localeCompare(b.id));
 }
@@ -139,12 +141,14 @@ export async function getAllCases(): Promise<CaseRecord[]> {
 export async function getCase(id: string): Promise<CaseRecord | null> {
   const versions = await runtimeCaseVersions(id);
   const newest = versions[versions.length - 1];
-  if (newest) return newest;
+  // A newly supplied seed policy revision can be newer than an existing runtime v1.
+
 
   const seeds = await loadSeedCases();
   const matches = seeds.filter((record) => record.id === id);
+  if (newest) matches.push(newest);
   if (matches.length === 0) return null;
-  return matches.reduce((best, current) => (current.version > best.version ? current : best));
+  return matches.reduce((best, current) => (current.version >= best.version ? current : best));
 }
 
 /**

@@ -253,7 +253,7 @@ function CaseHeader({
             />
           </span>
           <span className="badge badge--neutral">
-            {caseRecord.category === 'damage' ? 'Damage case' : caseRecord.category === 'no_show_charge' ? 'No-show case' : 'Route case'}
+            {caseRecord.category === 'damage' ? 'Damage case' : caseRecord.category === 'no_show_charge' ? 'No-show case' : caseRecord.category === 'fare_dispute' ? 'Fare case' : 'Route case'}
           </span>
           <span className="badge badge--neutral">
             {latest?.mode === 'live' ? 'Live assessment' : 'Sample assessment'} ·{' '}
@@ -697,6 +697,7 @@ function StartReview({
 /* ------------------------------------------------------------------ */
 
 function generateTitle(caseRecord: CaseRecord, evaluation: DeterministicEvaluation): string {
+  if (caseRecord.category === 'fare_dispute') return 'Was the fare increase notified?';
   if (caseRecord.category === 'damage') return 'What supports the damage charge?';
   if (caseRecord.category === 'no_show_charge') {
     if (evaluation.disposition === 'refund') return 'Was the pickup condition met?';

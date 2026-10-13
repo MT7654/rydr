@@ -20,7 +20,7 @@ import type { CatalogEntry } from '../agents/evidenceService';
 export const DeterministicBundleSchema = zod.object({
   allowedActionCatalogue:zod.array(zod.object({ actionId:zod.string(),sourceOwner:zod.string() })).optional(),
   allowedRemedyOptionIds:zod.array(zod.string()).optional(),
-  category: zod.enum(['no_show_charge', 'route_overcharge', 'damage']),
+  category: zod.enum(['no_show_charge', 'route_overcharge', 'fare_dispute', 'damage']),
   allowedDispositions: zod.array(zod.string()),
   deterministicRefundCents: zod.number().nonnegative().nullable(),
   issues: zod.array(zod.string()),
@@ -36,7 +36,7 @@ export type DeterministicBundle = z.infer<typeof DeterministicBundleSchema>;
 export const SelectionInputSchema = zod.object({
   phase: zod.literal('select_evidence'),
   side: zod.enum(['rider', 'driver']),
-  category: zod.enum(['no_show_charge', 'route_overcharge', 'damage']),
+  category: zod.enum(['no_show_charge', 'route_overcharge', 'fare_dispute', 'damage']),
   catalog: zod.array(
     zod.object({ id: zod.string(), kind: zod.string(), summary: zod.string() }),
   ),

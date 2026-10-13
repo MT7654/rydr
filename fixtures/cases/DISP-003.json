@@ -1,0 +1,365 @@
+{
+  "id": "DISP-003",
+  "version": 1,
+  "category": "fare_dispute",
+  "currency": "SGD",
+  "disputedCents": 450,
+  "riderStatement": "Final fare of $16.50 was charged, but the upfront quote shown at booking was only $12.00. The rider was not informed of any fare change, surge pricing, or price adjustment before or during the trip. The rider requests a refund of the $4.50 difference.",
+  "driverStatement": null,
+  "trip": {
+    "id": "TRIP-2026-10023",
+    "scheduledAt": "2026-09-14T21:05:00+08:00",
+    "pickup": {
+      "label": "Bugis Junction",
+      "lat": 1.3,
+      "lng": 103.8556
+    },
+    "dropoff": {
+      "label": "Marina Bay Sands",
+      "lat": 1.2834,
+      "lng": 103.8607
+    }
+  },
+  "evidence": [
+    {
+      "id": "DISP003-GPS-01",
+      "kind": "gps",
+      "timestamp": "2026-09-14T21:05:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/gps_telemetry/0",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.3,
+        "lng": 103.8556,
+        "accuracyMeters": null,
+        "speedKmh": 0,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP003-GPS-02",
+      "kind": "gps",
+      "timestamp": "2026-09-14T21:07:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/gps_telemetry/1",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.2972,
+        "lng": 103.8561,
+        "accuracyMeters": null,
+        "speedKmh": 25,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP003-GPS-03",
+      "kind": "gps",
+      "timestamp": "2026-09-14T21:09:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/gps_telemetry/2",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.2935,
+        "lng": 103.8568,
+        "accuracyMeters": null,
+        "speedKmh": 30,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP003-GPS-04",
+      "kind": "gps",
+      "timestamp": "2026-09-14T21:11:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/gps_telemetry/3",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.2901,
+        "lng": 103.8582,
+        "accuracyMeters": null,
+        "speedKmh": 22,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP003-GPS-05",
+      "kind": "gps",
+      "timestamp": "2026-09-14T21:13:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/gps_telemetry/4",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.2868,
+        "lng": 103.8595,
+        "accuracyMeters": null,
+        "speedKmh": 28,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP003-GPS-06",
+      "kind": "gps",
+      "timestamp": "2026-09-14T21:16:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/gps_telemetry/5",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.2845,
+        "lng": 103.8604,
+        "accuracyMeters": null,
+        "speedKmh": 15,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP003-GPS-07",
+      "kind": "gps",
+      "timestamp": "2026-09-14T21:18:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/gps_telemetry/6",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "lat": 1.2834,
+        "lng": 103.8607,
+        "accuracyMeters": null,
+        "speedKmh": 0,
+        "status": "unknown"
+      },
+      "qualityIssues": [
+        "GPS accuracy is not supplied. Coordinates do not prove capture authenticity."
+      ]
+    },
+    {
+      "id": "DISP003-CHAT-08",
+      "kind": "chat",
+      "timestamp": "2026-09-14T21:02:15+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/chat_logs/0",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "sender": "rider",
+        "type": "message",
+        "content": "Hi, I'm at the taxi stand outside Bugis Junction near the fountain."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP003-CHAT-09",
+      "kind": "chat",
+      "timestamp": "2026-09-14T21:03:40+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/chat_logs/1",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "sender": "driver",
+        "type": "message",
+        "content": "OK, I see you. Pulling up now, white Elantra."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP003-CHAT-10",
+      "kind": "chat",
+      "timestamp": "2026-09-14T21:18:30+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/chat_logs/2",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "sender": "rider",
+        "type": "message",
+        "content": "Thanks for the ride! Just noticed the fare is $16.50 — I thought it was $12?"
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP003-TRIP_EVENT-11",
+      "kind": "trip_event",
+      "timestamp": "2026-09-14T21:05:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/trip_data/start_time",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "eventType": "trip_started",
+        "details": "Recorded trip start."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP003-TRIP_EVENT-12",
+      "kind": "trip_event",
+      "timestamp": "2026-09-14T21:18:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/trip_data/end_time",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "eventType": "trip_completed",
+        "details": "Recorded trip completion."
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP003-HISTORY-13",
+      "kind": "history",
+      "timestamp": null,
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/rider_profile",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "subject": "rider",
+        "avgRating": 4.5,
+        "totalTrips": 7,
+        "disputeCount": 0,
+        "fraudFlags": 0,
+        "note": null
+      },
+      "qualityIssues": [
+        "Account history never establishes trip liability; routing only."
+      ]
+    },
+    {
+      "id": "DISP003-HISTORY-14",
+      "kind": "history",
+      "timestamp": null,
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/driver_profile",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "subject": "driver",
+        "avgRating": 4.8,
+        "totalTrips": 1567,
+        "disputeCount": 2,
+        "fraudFlags": 0,
+        "note": null
+      },
+      "qualityIssues": [
+        "Account history never establishes trip liability; routing only."
+      ]
+    },
+    {
+      "id": "DISP003-FARE-15",
+      "kind": "fare",
+      "timestamp": "2026-09-14T21:05:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/fare_breakdown",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "quotedCents": 1200,
+        "chargedCents": 1650,
+        "surgeableSubtotalCents": 900,
+        "fixedFeeCents": 300,
+        "quoteMultiplier": 1,
+        "startMultiplier": 1.5,
+        "notifiedBeforePickup": false,
+        "noticeIncludesFareAndFreeCancellation": null,
+        "otherComponentsUnchanged": true
+      },
+      "qualityIssues": [
+        "The fixed S$3 amount is derived from the supplied totals and surgeable subtotal; no itemized fixed-fee ledger is supplied."
+      ]
+    },
+    {
+      "id": "DISP003-TRIP_EVENT-16",
+      "kind": "trip_event",
+      "timestamp": "2026-09-14T21:04:30+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/surge_pricing_log",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "eventType": "surge_pricing_log",
+        "details": "{\"quote_time_surge\":1,\"trip_start_surge\":1.5,\"surge_activated_at\":\"2026-09-14T21:04:30+08:00\",\"rider_notified\":false,\"notification_method\":null,\"notification_timestamp\":null,\"reason\":\"surge_window_activated_between_quote_and_pickup\"}"
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP003-PAYMENT-17",
+      "kind": "payment",
+      "timestamp": "2026-09-14T21:05:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/trip_data/upfront_quote",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "component": "upfront_quote",
+        "amountCents": 1200,
+        "direction": "charge",
+        "method": "credit_card",
+        "status": "pending"
+      },
+      "qualityIssues": []
+    },
+    {
+      "id": "DISP003-PAYMENT-18",
+      "kind": "payment",
+      "timestamp": "2026-09-14T21:18:00+08:00",
+      "source": {
+        "dataset": "reference/DISP-003.source.json",
+        "jsonPointer": "/trip_data/actual_fare",
+        "provenance": "supplied_sample"
+      },
+      "payload": {
+        "component": "final_fare",
+        "amountCents": 1650,
+        "direction": "charge",
+        "method": "credit_card",
+        "status": "applied"
+      },
+      "qualityIssues": []
+    }
+  ],
+  "policyVersion": "ryde-hackathon-policy-v2.1",
+  "suppliedPolicyId": "ryde-hackathon-policy-v2.1",
+  "provenance": "supplied_sample",
+  "derivedFrom": null,
+  "changeLog": []
+}

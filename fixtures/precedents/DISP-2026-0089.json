@@ -1,0 +1,40 @@
+{
+  "id": "DISP-2026-0089",
+  "caseId": "DISP-2026-0089",
+  "caseVersion": 1,
+  "category": "route_overcharge",
+  "policyId": "ryde-hackathon-policy-v2.1",
+  "policyVersion": "2.1",
+  "citedPolicyIds": [
+    "REF-1.2",
+    "REF-1.3"
+  ],
+  "tags": [
+    "route_measurable",
+    "deviation_flagged",
+    "justification_approved",
+    "ledger_reconciled",
+    "surcharge_identified",
+    "notice_absent"
+  ],
+  "materialFacts": [
+    "Traffic-justified 1.8 km deviation; rider not informed.",
+    "Only excess distance fare was refunded. The precedent's 1.8 km deviation was within the automatic-ruling distance limit."
+  ],
+  "disposition": "partial_refund",
+  "refundCents": 320,
+  "chargeCents": 320,
+  "status": "approved",
+  "source": "organizer_reference",
+  "priorRecommendation": null,
+  "correctionReason": null,
+  "approvedBy": "Supplied reference Section 7 (not independently audited)",
+  "approvedAt": "2026-02-12T00:00:00+08:00",
+  "approvalNote": "Reference example supplied in the policy. It does not override current evidence, eligibility, amount, or escalation limits.",
+  "activationFailure": null,
+  "retiredAt": null,
+  "retiredReason": null,
+  "supersedesPrecedentId": null,
+  "createdAt": "2026-02-12T00:00:00+08:00",
+  "updatedAt": "2026-02-12T00:00:00+08:00"
+}

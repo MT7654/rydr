@@ -45,6 +45,10 @@ export const CONDITION_TAGS = [
   'ledger_mismatch',
   'ledger_reconciled',
   'surcharge_identified',
+  'surge_increased',
+  'notice_absent',
+  'notice_agreed',
+  'fare_reconciled',
 ] as const;
 export type ConditionTag = (typeof CONDITION_TAGS)[number];
 
@@ -103,6 +107,13 @@ export function extractCaseFeatures(
     if (route.surchargeCents !== null) tags.push('surcharge_identified');
   }
 
+  if (evaluation.fare) {
+    if (evaluation.fare.startMultiplier > evaluation.fare.quoteMultiplier) tags.push('surge_increased');
+    if (evaluation.fare.notified === false) tags.push('notice_absent');
+    if (evaluation.fare.reconciled) tags.push('fare_reconciled');
+  }
+  if (evaluation.route?.notificationStatus === 'not_informed') tags.push('notice_absent');
+  if (evaluation.route?.notificationStatus === 'agreed') tags.push('notice_agreed');
   return {
     category: caseRecord.category,
     policyId: pack.id,
@@ -131,7 +142,7 @@ export const PrecedentRecordSchema = z.object({
   /** The case this example came from. Never retrieved for that case itself. */
   caseId: z.string().min(1),
   caseVersion: z.number().int().positive(),
-  category: z.enum(['no_show_charge', 'route_overcharge', 'damage']),
+  category: z.enum(['no_show_charge', 'route_overcharge', 'fare_dispute', 'damage']),
   /** Governing pack id this example was decided under. */
   policyId: z.string().min(1),
   policyVersion: z.string().min(1),
@@ -145,7 +156,7 @@ export const PrecedentRecordSchema = z.object({
   chargeCents: z.number().int().positive(),
   status: z.enum(PRECEDENT_STATUSES),
   /** Where the example came from. A human correction is never auto-published. */
-  source: z.enum(['reviewer_override', 'curator_authored']),
+  source: z.enum(['reviewer_override', 'curator_authored', 'organizer_reference']),
   /** The automated recommendation the reviewer departed from, for a candidate. */
   priorRecommendation: z.string().nullable(),
   correctionReason: z.string().nullable(),
