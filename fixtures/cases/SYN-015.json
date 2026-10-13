@@ -1,0 +1,150 @@
+{
+  "id": "SYN-015",
+  "version": 1,
+  "category": "damage",
+  "currency": "SGD",
+  "disputedCents": 2500,
+  "riderStatement": "The cleaning recovery is pending. Please verify the receipt and trip evidence before collecting it.",
+  "driverStatement": "I submitted a professional cleaning receipt for S$25 and the vehicle/trip records. I request reimbursement subject to review.",
+  "trip": {
+    "id": "TRIP-SYN-015",
+    "scheduledAt": "2026-10-02T18:30:00+08:00",
+    "pickup": {
+      "lat": 1.2847,
+      "lng": 103.8382,
+      "label": "Tiong Bahru Plaza"
+    },
+    "dropoff": {
+      "lat": 1.2648,
+      "lng": 103.8223,
+      "label": "VivoCity"
+    }
+  },
+  "evidence": [
+    {
+      "id": "SYN015-EVT-01",
+      "kind": "trip_event",
+      "timestamp": "2026-10-02T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-015.json",
+        "jsonPointer": "/evidence/0",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "No verified before/after comparison or causal linkage."
+      ],
+      "payload": {
+        "eventType": "damage_disputed",
+        "details": "Damage allegation requires reviewer inspection; upload demonstration images from the case page."
+      }
+    },
+    {
+      "id": "SYN015-IMG-01",
+      "kind": "image",
+      "timestamp": "2026-10-02T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-015.json",
+        "jsonPointer": "/evidence/1",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "Synthetic illustration. Submitted linkage and timestamps do not establish capture truth or causation."
+      ],
+      "payload": {
+        "assetUrl": "/damage-demo/seat-view-1.png",
+        "mimeType": "image/png",
+        "sizeBytes": 17744,
+        "hash": "d325e42a447e0675ae9e60de781ed93ebb382d03973ceba1fceb9291377cba49",
+        "captureAt": "2026-10-02T18:30:00+08:00",
+        "metadata": {
+          "tripId": "TRIP-SYN-015",
+          "fixtureDescription": "Context view: drawn seat with a demonstration mark. Before/after comparison and responsibility remain unknown."
+        },
+        "angles": [
+          "Context view"
+        ],
+        "sufficiency": "missing_context"
+      }
+    },
+    {
+      "id": "SYN015-IMG-02",
+      "kind": "image",
+      "timestamp": "2026-10-02T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-015.json",
+        "jsonPointer": "/evidence/2",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "Synthetic illustration. Submitted linkage and timestamps do not establish capture truth or causation."
+      ],
+      "payload": {
+        "assetUrl": "/damage-demo/seat-view-2.png",
+        "mimeType": "image/png",
+        "sizeBytes": 17936,
+        "hash": "32f7de23e91d4320a250f0af5b3edff68c8362cf161702e2aa0ed1984279d7b4",
+        "captureAt": "2026-10-02T18:30:00+08:00",
+        "metadata": {
+          "tripId": "TRIP-SYN-015",
+          "fixtureDescription": "Close-up view: drawn seat with a demonstration mark. Before/after comparison and responsibility remain unknown."
+        },
+        "angles": [
+          "Close-up view"
+        ],
+        "sufficiency": "missing_context"
+      }
+    },
+    {
+      "id": "SYN015-IMG-03",
+      "kind": "image",
+      "timestamp": "2026-10-02T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-015.json",
+        "jsonPointer": "/evidence/3",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "Synthetic illustration. Submitted linkage and timestamps do not establish capture truth or causation."
+      ],
+      "payload": {
+        "assetUrl": "/damage-demo/seat-view-3.png",
+        "mimeType": "image/png",
+        "sizeBytes": 17301,
+        "hash": "f0ec14b11f257d078e64fee65081537578f39d67e9645896842d94d0ce221bef",
+        "captureAt": "2026-10-02T18:30:00+08:00",
+        "metadata": {
+          "tripId": "TRIP-SYN-015",
+          "fixtureDescription": "Side view: drawn seat with a demonstration mark. Before/after comparison and responsibility remain unknown."
+        },
+        "angles": [
+          "Side view"
+        ],
+        "sufficiency": "missing_context"
+      }
+    },
+    {
+      "id": "SYN015-RECEIPT",
+      "kind": "trip_event",
+      "timestamp": "2026-10-02T19:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-015.json",
+        "jsonPointer": "/evidence/4",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "Synthetic source document for workflow testing; not a real professional receipt."
+      ],
+      "payload": {
+        "eventType": "professional_cleaning_receipt",
+        "details": "Sample receipt CLN-015: professional cleaning S$25, food/drink spillage; company CleanRide SG, 10 Sample Road, contact 61234567; vehicle SXX1234A; cleaning 2 Oct 2026 19:30; submitted 2 Oct 2026 20:00; sample signature and company stamp recorded. Source review still required."
+      }
+    }
+  ],
+  "policyVersion": "ryde-cleaning-20261002",
+  "suppliedPolicyId": null,
+  "provenance": "synthetic",
+  "derivedFrom": "SYN-009",
+  "changeLog": [
+    "Synthetic cleaning-claim example for independent reimbursement and recovery. Photos are illustrative; a reviewer verifies the sample claim before any ledger entry."
+  ]
+}

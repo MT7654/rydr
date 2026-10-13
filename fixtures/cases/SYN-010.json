@@ -1,0 +1,101 @@
+{
+  "id": "SYN-010",
+  "version": 1,
+  "category": "damage",
+  "currency": "SGD",
+  "disputedCents": 4500,
+  "riderStatement": "The supplied image shows ordinary wear and has been reused. I dispute responsibility.",
+  "driverStatement": "Please review the image and the trip linkage before deciding the fee.",
+  "trip": {
+    "id": "TRIP-SYN-010",
+    "scheduledAt": "2026-09-25T18:30:00+08:00",
+    "pickup": {
+      "lat": 1.2847,
+      "lng": 103.8382,
+      "label": "Tiong Bahru Plaza"
+    },
+    "dropoff": {
+      "lat": 1.2648,
+      "lng": 103.8223,
+      "label": "VivoCity"
+    }
+  },
+  "evidence": [
+    {
+      "id": "SYN010-0",
+      "kind": "trip_event",
+      "timestamp": "2026-09-25T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-010.json",
+        "jsonPointer": "/evidence/0",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "No verified before/after comparison or causal linkage."
+      ],
+      "payload": {
+        "eventType": "damage_disputed",
+        "details": "Damage allegation requires reviewer inspection; upload demonstration images from the case page."
+      }
+    },
+    {
+      "id": "SYN010-1",
+      "kind": "image",
+      "timestamp": "2026-09-25T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-010.json",
+        "jsonPointer": "/evidence/1",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "Synthetic illustration. Submitted linkage and timestamps do not establish capture truth or causation."
+      ],
+      "payload": {
+        "assetUrl": "/damage-demo/seat-view-1.png",
+        "mimeType": "image/png",
+        "sizeBytes": 17744,
+        "hash": "d325e42a447e0675ae9e60de781ed93ebb382d03973ceba1fceb9291377cba49",
+        "captureAt": "2026-09-01T12:00:00+08:00",
+        "metadata": {
+          "fixtureWear": "true",
+          "fixtureDescription": "Scripted ordinary-wear example; duplicate image with inconsistent capture time."
+        },
+        "angles": [],
+        "sufficiency": "inadequate_angles"
+      }
+    },
+    {
+      "id": "SYN010-2",
+      "kind": "image",
+      "timestamp": "2026-09-25T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-010.json",
+        "jsonPointer": "/evidence/2",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "Synthetic illustration. Submitted linkage and timestamps do not establish capture truth or causation."
+      ],
+      "payload": {
+        "assetUrl": "/damage-demo/seat-view-1.png",
+        "mimeType": "image/png",
+        "sizeBytes": 17744,
+        "hash": "d325e42a447e0675ae9e60de781ed93ebb382d03973ceba1fceb9291377cba49",
+        "captureAt": "2026-09-01T12:00:00+08:00",
+        "metadata": {
+          "fixtureWear": "true",
+          "fixtureDescription": "Scripted ordinary-wear example; duplicate image with inconsistent capture time."
+        },
+        "angles": [],
+        "sufficiency": "inadequate_angles"
+      }
+    }
+  ],
+  "policyVersion": "rydr-demo-policy-v1",
+  "suppliedPolicyId": null,
+  "provenance": "synthetic",
+  "derivedFrom": null,
+  "changeLog": [
+    "Synthetic reused-image, timestamp-conflict, ordinary-wear and inadequate-angle demonstration."
+  ]
+}

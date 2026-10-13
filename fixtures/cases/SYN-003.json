@@ -1,0 +1,146 @@
+{
+  "id": "SYN-003",
+  "version": 1,
+  "category": "no_show_charge",
+  "currency": "SGD",
+  "disputedCents": 500,
+  "riderStatement": "I was at the pickup point from 09:14 and never saw the car. The SGD 5.00 no-show charge should be reversed.",
+  "driverStatement": "I arrived early at 09:12, waited at the pickup point and called the rider at 09:17. I cancelled at 09:22 and the fee applied.",
+  "trip": {
+    "id": "TRIP-SYN-003",
+    "scheduledAt": "2026-09-17T09:15:00+08:00",
+    "pickup": { "lat": 1.2847, "lng": 103.8382, "label": "Tiong Bahru Plaza" },
+    "dropoff": { "lat": 1.2648, "lng": 103.8223, "label": "VivoCity" }
+  },
+  "evidence": [
+    {
+      "id": "SYN003-GPS-01",
+      "kind": "gps",
+      "timestamp": "2026-09-17T09:12:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/0", "provenance": "synthetic" },
+      "payload": { "lat": 1.2848, "lng": 103.8382, "accuracyMeters": 120, "speedKmh": 0, "status": "arrived" },
+      "qualityIssues": ["Reported accuracy radius of 120 m exceeds the 50 m pickup radius, so presence inside the zone cannot be determined automatically."]
+    },
+    {
+      "id": "SYN003-GPS-02",
+      "kind": "gps",
+      "timestamp": "2026-09-17T09:14:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/1", "provenance": "synthetic" },
+      "payload": { "lat": 1.2848, "lng": 103.8382, "accuracyMeters": 120, "speedKmh": 0, "status": "waiting" },
+      "qualityIssues": ["Reported accuracy radius of 120 m exceeds the 50 m pickup radius, so presence inside the zone cannot be determined automatically."]
+    },
+    {
+      "id": "SYN003-GPS-03",
+      "kind": "gps",
+      "timestamp": "2026-09-17T09:16:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/2", "provenance": "synthetic" },
+      "payload": { "lat": 1.2848, "lng": 103.8382, "accuracyMeters": 120, "speedKmh": 0, "status": "waiting" },
+      "qualityIssues": ["Reported accuracy radius of 120 m exceeds the 50 m pickup radius, so presence inside the zone cannot be determined automatically."]
+    },
+    {
+      "id": "SYN003-GPS-04",
+      "kind": "gps",
+      "timestamp": "2026-09-17T09:18:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/3", "provenance": "synthetic" },
+      "payload": { "lat": 1.2848, "lng": 103.8382, "accuracyMeters": 120, "speedKmh": 0, "status": "waiting" },
+      "qualityIssues": ["Reported accuracy radius of 120 m exceeds the 50 m pickup radius, so presence inside the zone cannot be determined automatically."]
+    },
+    {
+      "id": "SYN003-GPS-05",
+      "kind": "gps",
+      "timestamp": "2026-09-17T09:20:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/4", "provenance": "synthetic" },
+      "payload": { "lat": 1.2848, "lng": 103.8382, "accuracyMeters": 120, "speedKmh": 0, "status": "waiting" },
+      "qualityIssues": ["Reported accuracy radius of 120 m exceeds the 50 m pickup radius, so presence inside the zone cannot be determined automatically."]
+    },
+    {
+      "id": "SYN003-GPS-06",
+      "kind": "gps",
+      "timestamp": "2026-09-17T09:22:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/5", "provenance": "synthetic" },
+      "payload": { "lat": 1.2848, "lng": 103.8382, "accuracyMeters": 120, "speedKmh": 0, "status": "cancelled" },
+      "qualityIssues": ["Reported accuracy radius of 120 m exceeds the 50 m pickup radius, so presence inside the zone cannot be determined automatically."]
+    },
+    {
+      "id": "SYN003-EVT-01",
+      "kind": "trip_event",
+      "timestamp": "2026-09-17T09:00:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/6", "provenance": "synthetic" },
+      "payload": { "eventType": "booking_confirmed", "details": "Rider booked trip TRIP-SYN-003. Scheduled pickup 09:15." },
+      "qualityIssues": []
+    },
+    {
+      "id": "SYN003-EVT-02",
+      "kind": "trip_event",
+      "timestamp": "2026-09-17T09:12:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/7", "provenance": "synthetic" },
+      "payload": { "eventType": "driver_arrived", "details": "Driver marked arrival two minutes before the scheduled pickup time." },
+      "qualityIssues": ["Arrival precedes the scheduled pickup by three minutes, so the governing start of the waiting clock is ambiguous."]
+    },
+    {
+      "id": "SYN003-EVT-03",
+      "kind": "trip_event",
+      "timestamp": "2026-09-17T09:15:40+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/8", "provenance": "synthetic" },
+      "payload": { "eventType": "wait_timer_started", "details": "Free wait timer started. 5 min free wait period ends at 09:20." },
+      "qualityIssues": ["Timer starts 3m40s after the recorded arrival and 40 s after the scheduled pickup time."]
+    },
+    {
+      "id": "SYN003-EVT-04",
+      "kind": "trip_event",
+      "timestamp": "2026-09-17T09:20:40+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/9", "provenance": "synthetic" },
+      "payload": { "eventType": "wait_timer_expired", "details": "Free 5 min wait period expired at 09:20." },
+      "qualityIssues": ["Event timestamp is 09:20:40 while the event text states the free wait period ends at 09:20."]
+    },
+    {
+      "id": "SYN003-EVT-05",
+      "kind": "trip_event",
+      "timestamp": "2026-09-17T09:22:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/10", "provenance": "synthetic" },
+      "payload": { "eventType": "cancellation_fee_applied", "details": "SGD 5.00 no-show cancellation fee applied." },
+      "qualityIssues": ["Cancellation is 600 s after the recorded arrival but only 380 s after the recorded timer start, which straddles the 480 s threshold."]
+    },
+    {
+      "id": "SYN003-CALL-01",
+      "kind": "call",
+      "timestamp": "2026-09-17T09:17:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/11", "provenance": "synthetic" },
+      "payload": { "sender": "driver", "direction": "outgoing", "answered": false, "ringSeconds": 18, "content": "Outgoing call to rider - not answered (rang 18s, no response)." },
+      "qualityIssues": ["No observed rider response supports a lack of observed response, not rider absence."]
+    },
+    {
+      "id": "SYN003-PAY-01",
+      "kind": "payment",
+      "timestamp": "2026-09-17T09:22:00+08:00",
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/12", "provenance": "synthetic" },
+      "payload": { "component": "cancellation_fee", "amountCents": 500, "direction": "charge", "method": "e-wallet", "status": "applied" },
+      "qualityIssues": []
+    },
+    {
+      "id": "SYN003-HIST-RIDER",
+      "kind": "history",
+      "timestamp": null,
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/13", "provenance": "synthetic" },
+      "payload": { "subject": "rider", "avgRating": 4.5, "totalTrips": 58, "disputeCount": 2, "fraudFlags": 0, "note": "Synthetic account history." },
+      "qualityIssues": ["History is review-routing context only and cannot establish liability."]
+    },
+    {
+      "id": "SYN003-HIST-DRIVER",
+      "kind": "history",
+      "timestamp": null,
+      "source": { "dataset": "fixtures/cases/SYN-003.json", "jsonPointer": "/evidence/14", "provenance": "synthetic" },
+      "payload": { "subject": "driver", "avgRating": 4.8, "totalTrips": 1510, "disputeCount": 0, "fraudFlags": 0, "note": "Synthetic account history." },
+      "qualityIssues": ["History is review-routing context only and cannot establish liability."]
+    }
+  ],
+  "policyVersion": "rydr-demo-policy-v1",
+  "suppliedPolicyId": null,
+  "provenance": "synthetic",
+  "derivedFrom": null,
+  "changeLog": [
+    "Synthetic ambiguous-evidence case authored for Rydr fixture mode.",
+    "GPS accuracy radius deliberately set to 120 m so the pickup-zone determination is indeterminate.",
+    "Arrival, scheduled pickup and timer start deliberately disagree so the choice of governing clock changes the outcome."
+  ]
+}

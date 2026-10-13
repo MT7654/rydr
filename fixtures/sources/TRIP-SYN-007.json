@@ -1,0 +1,13 @@
+{
+  "tripId": "TRIP-SYN-007",
+  "sourceType": "simulated",
+  "note": "Simulated platform source records for the labelled demo dataset. Not a real Ryde API.",
+  "tools": {
+    "effective_policy": {
+      "status": "not_applicable",
+      "recordIds": [],
+      "note": "No effective-dated clarification exists for which clock governs the waiting period on this trip. A platform policy owner has to answer this; no amount of telemetry resolves it.",
+      "clarification": null
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "id": "ryde-advance-no-show-20261002",
+  "version": "1.0.0",
+  "label": "Ryde advance no-show · public policy snapshot",
+  "source": "ryde_official",
+  "clauses": [
+    {
+      "id": "NS-01",
+      "category": "no_show_charge",
+      "title": "Rydr safeguard: Pickup zone determination",
+      "text": "Pickup radius is 50 metres. Let d be the Haversine distance between a stationary driver sample and the pickup point, and a the reported accuracy radius: inside if d + a <= 50, outside if d - a > 50, otherwise indeterminate. A location accuracy radius must be present for an automatic quality determination. This is a conservative engineering rule, not a statistical guarantee of location accuracy.",
+      "authority": "rydr_safeguard"
+    },
+    {
+      "id": "NS-02",
+      "category": "no_show_charge",
+      "title": "Rydr safeguard: Arrival requires corroborating presence evidence",
+      "text": "An arrival flag alone is insufficient. Require usable stationary GPS samples supporting presence, no contrary off-zone observation, and no excessive sampling gap. The demo continuity limit is 180 seconds; neither location nor stops are interpolated across larger gaps as fact.",
+      "authority": "rydr_safeguard"
+    },
+    {
+      "id": "NS-03",
+      "category": "no_show_charge",
+      "title": "Published waiting clock",
+      "text": "For this snapshot example, use the recorded driver “I’m Here” action. For advance pickup before the scheduled time, the clock is unclear and requires review.",
+      "authority": "rydr_safeguard"
+    },
+    {
+      "id": "NS-04",
+      "category": "no_show_charge",
+      "title": "Ryde no-show cancellation condition",
+      "text": "A driver no-show cancellation after more than three minutes of waiting can incur a rider cancellation charge of S$6.61. This differs from the S$5 waiting charge when the rider boards and the trip completes.",
+      "authority": "official_ryde",
+      "sourceUrl": "https://help.rydesharing.com/hc/en-us/articles/23534478435353-Cancellation-and-Waiting-Fee",
+      "retrievedAt": "2026-10-02"
+    },
+    {
+      "id": "NS-05",
+      "category": "no_show_charge",
+      "title": "Rydr safeguard: Fee eligibility prerequisites",
+      "text": "Rydr checks location, elapsed waiting, cancellation reason and trip completion before proposing a result. Missing contact evidence prompts review; it does not establish an official refund entitlement.",
+      "authority": "rydr_safeguard"
+    },
+    {
+      "id": "NS-06",
+      "category": "no_show_charge",
+      "title": "Rydr safeguard: Outcomes for no-show disputes",
+      "text": "Rydr proposes a simulated refund when verified evidence contradicts the no-show condition. Uncertain evidence or policy scope requires human review. Ryde retains discretion over real refunds.",
+      "authority": "rydr_safeguard"
+    },
+    {
+      "id": "NS-07",
+      "category": "no_show_charge",
+      "title": "Rydr safeguard: What may not be inferred",
+      "text": "Rider absence is never deduced merely from no replies; that supports only a lack of observed response. Account history and ratings cannot change fee eligibility or which party wins.",
+      "authority": "rydr_safeguard"
+    },
+    {
+      "id": "GN-01",
+      "category": "no_show_charge",
+      "title": "Rydr safeguard: Evidence quality score is heuristic",
+      "text": "The prototype score is completeness plus source traceability plus consistency plus category-specific measurement quality, divided by 100. It is not a calibrated probability of being correct.",
+      "authority": "rydr_safeguard"
+    },
+    {
+      "id": "GN-03",
+      "category": "no_show_charge",
+      "title": "Rydr safeguard: High-value review threshold",
+      "text": "A disputed amount above 5000 cents routes to human review. Thresholds are prototype configuration, not calibrated production values.",
+      "authority": "rydr_safeguard"
+    },
+    {
+      "id": "RYDE-CONTACT",
+      "category": "no_show_charge",
+      "title": "Contact before cancellation",
+      "text": "Ryde advises trying in-app chat or a call when the rider is unreachable before considering cancellation.",
+      "authority": "official_ryde",
+      "sourceUrl": "https://help.rydesharing.com/hc/en-us/articles/115001438754-I-am-unable-to-contact-my-rider-The-rider-did-not-turn-up-What-should-I-do",
+      "retrievedAt": "2026-10-02"
+    },
+    {
+      "id": "RYDE-CANCEL-SCOPE",
+      "category": "no_show_charge",
+      "title": "Advance booking scope",
+      "text": "Advance rider cancellations more than fifteen minutes before pickup are uncharged. A late match has a three-minute grace period. Driver no-show cancellation requires more than three minutes waiting.",
+      "authority": "official_ryde",
+      "sourceUrl": "https://help.rydesharing.com/hc/en-us/articles/23534478435353-Cancellation-and-Waiting-Fee",
+      "retrievedAt": "2026-10-02"
+    }
+  ],
+  "thresholds": {
+    "pickupRadiusMeters": 50,
+    "continuityLimitSeconds": 180,
+    "freeWaitSeconds": 180,
+    "noShowThresholdSeconds": 180,
+    "routeExcessPercent": 20,
+    "routeExcessMeters": 1000,
+    "highValueCents": 5000,
+    "qualityReviewFloor": 0.7,
+    "judgeConfidenceFloor": 0.7
+  },
+  "retrievedAt": "2026-10-02",
+  "effectiveFrom": null,
+  "officialScope": "advance_no_show",
+  "applicability": "Public sources retrieved 2 Oct 2026. Publication effective dates are not established. This is a synthetic policy-snapshot demonstration, not confirmation of the policy in force for an older real trip."
+}

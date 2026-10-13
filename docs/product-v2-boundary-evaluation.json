@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-10-13T09:26:49.647Z",
+  "source": "labelled synthetic playback",
+  "scope": "Three boundary cases; not production accuracy or measured user savings.",
+  "rows": [
+    {
+      "seconds": 179,
+      "expected": "refund",
+      "actual": "refund",
+      "externalCalls": 0
+    },
+    {
+      "seconds": 180,
+      "expected": "refund",
+      "actual": "refund",
+      "externalCalls": 0
+    },
+    {
+      "seconds": 181,
+      "expected": "uphold",
+      "actual": "uphold",
+      "externalCalls": 0
+    }
+  ]
+}

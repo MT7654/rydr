@@ -1,0 +1,73 @@
+{
+  "id": "ryde-cleaning-20261002",
+  "version": "1.0.0",
+  "label": "Ryde cleaning claims · public policy snapshot",
+  "source": "ryde_official",
+  "clauses": [
+    {
+      "id": "DM-01",
+      "category": "damage",
+      "title": "Rydr safeguard: Damage evidence requirements",
+      "text": "Damage claims require clear images of the affected area, linked to the trip. Images must show the vehicle condition before and after the trip where available. A single image is rarely sufficient.",
+      "authority": "rydr_safeguard"
+    },
+    {
+      "id": "DM-02",
+      "category": "damage",
+      "title": "Rydr safeguard: Image integrity and limits",
+      "text": "A content hash detects file identity, not capture truth. EXIF metadata is editable; absence is not fraud. Pixels cannot establish authenticity, time or causation. Human approval is required for all damage settlements in this prototype.",
+      "authority": "rydr_safeguard"
+    },
+    {
+      "id": "RYDE-CLEAN-EVIDENCE",
+      "category": "damage",
+      "title": "Cleaning claim evidence and deadlines",
+      "text": "Submit a cleaning claim through Ryde rather than demanding payment directly. A photo must identify the vehicle plate. Professional cleaning must occur within 24 hours and the claim within 48 hours. Include photos and a receipt identifying the company, cleaning date, plate, signature and stamp.",
+      "authority": "official_ryde",
+      "sourceUrl": "https://help.rydesharing.com/hc/en-us/articles/900004381243-My-Rider-Made-a-Mess",
+      "retrievedAt": "2026-10-02"
+    },
+    {
+      "id": "RYDE-CLEAN-REVIEW",
+      "category": "damage",
+      "title": "Review and appeal",
+      "text": "Ryde reviews cleaning claims and determines reimbursement. Immediate cleanup and pet fur or saliva are excluded. Drivers can appeal within 24 hours with further evidence. Driver reimbursement and rider recovery are separate processes.",
+      "authority": "official_ryde",
+      "sourceUrl": "https://help.rydesharing.com/hc/en-us/articles/900004381243-My-Rider-Made-a-Mess",
+      "retrievedAt": "2026-10-02"
+    },
+    {
+      "id": "RYDE-CLEAN-CAPS",
+      "category": "damage",
+      "title": "Cleaning fee caps",
+      "text": "Published caps are S$40 for food, drink, crumbs or sand; S$120 for bodily fluids or stains; and S$200 for vomit. Ryde checks photos, trip details and cleaning receipts. These are maximums, not automatic charges.",
+      "authority": "official_ryde",
+      "sourceUrl": "https://help.rydesharing.com/hc/en-us/articles/900003466206-I-made-a-mess-in-my-driver-s-vehicle",
+      "retrievedAt": "2026-10-02"
+    },
+    {
+      "id": "RYDE-CLEAN-DISPUTE",
+      "category": "damage",
+      "title": "Disputing a cleaning charge",
+      "text": "A rider who disputes responsibility can contact RydeHELP. The contamination claim must be verified before payment instructions are provided.",
+      "authority": "official_ryde",
+      "sourceUrl": "https://help.rydesharing.com/hc/en-us/articles/900003466206-I-made-a-mess-in-my-driver-s-vehicle",
+      "retrievedAt": "2026-10-02"
+    }
+  ],
+  "thresholds": {
+    "pickupRadiusMeters": 50,
+    "continuityLimitSeconds": 180,
+    "freeWaitSeconds": 300,
+    "noShowThresholdSeconds": 480,
+    "routeExcessPercent": 20,
+    "routeExcessMeters": 1000,
+    "highValueCents": 5000,
+    "qualityReviewFloor": 0.7,
+    "judgeConfidenceFloor": 0.7
+  },
+  "retrievedAt": "2026-10-02",
+  "effectiveFrom": null,
+  "officialScope": "cleaning",
+  "applicability": "Public sources retrieved 2 Oct 2026. Publication effective dates are not established. This is a synthetic policy-snapshot demonstration, not confirmation of the policy in force for an older real trip."
+}

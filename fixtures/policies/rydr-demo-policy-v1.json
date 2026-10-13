@@ -1,0 +1,121 @@
+{
+  "id": "rydr-demo-policy-v1",
+  "version": "1.0.0",
+  "label": "Rydr demo policy v1",
+  "source": "rydr_demo",
+  "clauses": [
+    {
+      "id": "NS-01",
+      "category": "no_show_charge",
+      "title": "Pickup zone determination",
+      "text": "Pickup radius is 50 metres. Let d be the Haversine distance between a stationary driver sample and the pickup point, and a the reported accuracy radius: inside if d + a <= 50, outside if d - a > 50, otherwise indeterminate. A location accuracy radius must be present for an automatic quality determination. This is a conservative engineering rule, not a statistical guarantee of location accuracy."
+    },
+    {
+      "id": "NS-02",
+      "category": "no_show_charge",
+      "title": "Arrival requires corroborating presence evidence",
+      "text": "An arrival flag alone is insufficient. Require usable stationary GPS samples supporting presence, no contrary off-zone observation, and no excessive sampling gap. The demo continuity limit is 180 seconds; neither location nor stops are interpolated across larger gaps as fact."
+    },
+    {
+      "id": "NS-03",
+      "category": "no_show_charge",
+      "title": "Effective waiting start",
+      "text": "Effective waiting starts at the latest of verified arrival, scheduled pickup if present, and verified timer start. Early arrival cannot charge the rider early under this demo policy."
+    },
+    {
+      "id": "NS-04",
+      "category": "no_show_charge",
+      "title": "Free wait and no-show threshold",
+      "text": "Free waiting is 300 seconds. The no-show threshold is 480 seconds from the effective waiting start, inclusive."
+    },
+    {
+      "id": "NS-05",
+      "category": "no_show_charge",
+      "title": "Fee eligibility prerequisites",
+      "text": "A SGD 5.00 no-show cancellation fee requires verified location and wait coverage, sufficient elapsed time, and at least one evidenced contact attempt. A sent notification proves attempted notification, not receipt or that the rider saw it."
+    },
+    {
+      "id": "NS-06",
+      "category": "no_show_charge",
+      "title": "Outcomes for no-show disputes",
+      "text": "Verified off-zone arrival means refund the disputed no-show fee. Missing or ambiguous location, or a material timestamp or policy conflict, means human review. A proven threshold violation may justify refund where all necessary facts for that conclusion are reliable."
+    },
+    {
+      "id": "NS-07",
+      "category": "no_show_charge",
+      "title": "What may not be inferred",
+      "text": "Rider absence is never deduced merely from no replies; that supports only a lack of observed response. Account history and ratings cannot change fee eligibility or which party wins."
+    },
+    {
+      "id": "RT-01",
+      "category": "route_overcharge",
+      "title": "Route measurement basis",
+      "text": "Use supplied planned-route and actual-route road-path lengths in metres with provenance. GPS segment sums are estimates; a straight-line pickup/dropoff distance is not an optimal driving route."
+    },
+    {
+      "id": "RT-02",
+      "category": "route_overcharge",
+      "title": "Deviation flag",
+      "text": "A deviation flag requires the actual route to exceed the planned route by BOTH 20 percent and 1000 metres. Equality does not exceed the threshold. A flag prompts investigation; it does not independently establish an unjustified detour."
+    },
+    {
+      "id": "RT-03",
+      "category": "route_overcharge",
+      "title": "Required route evidence and justification status",
+      "text": "Require usable route evidence, a fare ledger, and an explicit trip-linked justification status. verified_justification, verified_no_justification and unknown are separate values. Absence of a detour note is unknown, not proof that no justification existed."
+    },
+    {
+      "id": "RT-04",
+      "category": "route_overcharge",
+      "title": "Outcomes for route disputes",
+      "text": "Only a verified unjustified deviation with a reconciled eligible surcharge supports automatic refund of that surcharge. A rider-approved detour or verified road closure may justify retaining the fee. Unknown justification with a material excess charge escalates to human review."
+    },
+    {
+      "id": "RT-05",
+      "category": "route_overcharge",
+      "title": "Deterministic refund amount",
+      "text": "A refund is a deterministic amount derived from eligible excess-distance and excess-time ledger components, capped at the disputed charge, using integer-cent arithmetic and explicit rounding rules."
+    },
+    {
+      "id": "GN-01",
+      "category": "no_show_charge",
+      "title": "Evidence quality score is heuristic",
+      "text": "The prototype score is completeness plus source traceability plus consistency plus category-specific measurement quality, divided by 100. It is not a calibrated probability of being correct."
+    },
+    {
+      "id": "GN-02",
+      "category": "route_overcharge",
+      "title": "Hard blockers",
+      "text": "Safety allegations, ambiguous governing policy, missing material evidence, conflicting high-impact records, invalid agent output, unresolvable citations, inconsistent money, provider failure and disagreement with deterministic eligibility all override any score."
+    },
+    {
+      "id": "GN-03",
+      "category": "no_show_charge",
+      "title": "High-value review threshold",
+      "text": "A disputed amount above 5000 cents routes to human review. Thresholds are prototype configuration, not calibrated production values."
+    },
+    {
+      "id": "DM-01",
+      "category": "damage",
+      "title": "Damage evidence requirements",
+      "text": "Damage claims require clear images of the affected area, linked to the trip. Images must show the vehicle condition before and after the trip where available. A single image is rarely sufficient."
+    },
+    {
+      "id": "DM-02",
+      "category": "damage",
+      "title": "Image integrity and limits",
+      "text": "A content hash detects file identity, not capture truth. EXIF metadata is editable; absence is not fraud. Pixels cannot establish authenticity, time or causation. Human approval is required for all damage settlements in this prototype."
+    }
+  ],
+  "thresholds": {
+    "pickupRadiusMeters": 50,
+    "continuityLimitSeconds": 180,
+    "freeWaitSeconds": 300,
+    "noShowThresholdSeconds": 480,
+    "routeExcessPercent": 20,
+    "routeExcessMeters": 1000,
+    "highValueCents": 5000,
+    "qualityReviewFloor": 0.7,
+    "judgeConfidenceFloor": 0.7
+  }
+}

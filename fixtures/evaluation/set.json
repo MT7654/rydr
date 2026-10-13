@@ -1,0 +1,57 @@
+{
+  "note": "Synthetic evaluation set. Each entry derives a case from a base fixture with explicit, documented modifications. This file is safe for any reader: it contains no expected outcome. The reviewed labels live in labels.json, which no runtime agent may read.",
+  "cases": [
+    {
+      "id": "EVAL-001",
+      "base": "SYN-002",
+      "label": "clear no-show where the driver was inside the zone and waited past the threshold",
+      "modifications": {}
+    },
+    {
+      "id": "EVAL-002",
+      "base": "SYN-002",
+      "label": "same trip, but the driver's stationary fixes are far outside the pickup zone",
+      "modifications": { "gpsOffsetMeters": 400 }
+    },
+    {
+      "id": "EVAL-003",
+      "base": "SYN-002",
+      "label": "same trip, but no accuracy radius is recorded on any fix",
+      "modifications": { "gpsAccuracyMeters": null }
+    },
+    {
+      "id": "EVAL-004",
+      "base": "SYN-007",
+      "label": "arrival and timer start straddle the no-show threshold under an ambiguous supplied policy",
+      "modifications": {}
+    },
+    {
+      "id": "EVAL-005",
+      "base": "SYN-005",
+      "label": "route deviation with a verified rider-approved detour",
+      "modifications": {}
+    },
+    {
+      "id": "EVAL-006",
+      "base": "SYN-004",
+      "label": "route deviation with a verified absence of justification",
+      "modifications": {}
+    },
+    {
+      "id": "EVAL-007",
+      "base": "SYN-002",
+      "label": "an otherwise determinate no-show carrying an explicit safety allegation",
+      "modifications": {
+        "setStatements": {
+          "rider": "The driver threatened me at the pickup point and I felt unsafe, and I was also charged a no-show fee."
+        }
+      }
+    },
+    {
+      "id": "EVAL-008",
+      "base": "SYN-006",
+      "label": "no-show whose accuracy radius is genuinely unavailable from the case record",
+      "modifications": {}
+    }
+  ]
+}

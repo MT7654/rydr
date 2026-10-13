@@ -1,0 +1,36 @@
+{
+  "id": "supplied-sample-policy",
+  "version": "1.0.0",
+  "label": "Supplied sample cancellation policy (DISP-002)",
+  "source": "supplied_sample",
+  "clauses": [
+    {
+      "id": "SAMPLE-CANCEL-01",
+      "category": "no_show_charge",
+      "title": "Free wait time",
+      "text": "The supplied sample states a 5 minute free wait period for the trip."
+    },
+    {
+      "id": "SAMPLE-CANCEL-02",
+      "category": "no_show_charge",
+      "title": "Cancellation fee after wait",
+      "text": "The supplied sample states a cancellation fee of 5.00 SGD becomes applicable after the free wait period, paid as driver compensation."
+    },
+    {
+      "id": "SAMPLE-CANCEL-03",
+      "category": "no_show_charge",
+      "title": "No-show threshold",
+      "text": "The supplied sample states a 8 minute no-show threshold for the trip."
+    }
+  ],
+  "statedThresholds": {
+    "freeWaitSeconds": 300,
+    "noShowThresholdSeconds": 480,
+    "cancellationFeeCents": 500
+  },
+  "unresolved": [
+    "The sample does not define whether early arrival, scheduled pickup or actual timer start controls the waiting clock.",
+    "The sample does not define how the 5 minute free wait and the 8 minute no-show threshold interact for cancellation liability.",
+    "The sample reports a GPS-derived 'within 10m' assertion but no accuracy radius measurement."
+  ]
+}

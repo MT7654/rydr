@@ -1,0 +1,133 @@
+{
+  "id": "SYN-014",
+  "version": 1,
+  "category": "damage",
+  "currency": "SGD",
+  "disputedCents": 4500,
+  "riderStatement": "I dispute the cleaning and damage fee. The mark was already visible before my ride.",
+  "driverStatement": "A mark was visible after the ride. I cannot establish when it first appeared.",
+  "trip": {
+    "id": "TRIP-SYN-014",
+    "scheduledAt": "2026-10-02T18:30:00+08:00",
+    "pickup": {
+      "lat": 1.2847,
+      "lng": 103.8382,
+      "label": "Tiong Bahru Plaza"
+    },
+    "dropoff": {
+      "lat": 1.2648,
+      "lng": 103.8223,
+      "label": "VivoCity"
+    }
+  },
+  "evidence": [
+    {
+      "id": "SYN014-EVT-01",
+      "kind": "trip_event",
+      "timestamp": "2026-10-02T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-014.json",
+        "jsonPointer": "/evidence/0",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "No verified before/after comparison or causal linkage."
+      ],
+      "payload": {
+        "eventType": "damage_disputed",
+        "details": "Damage allegation requires reviewer inspection; upload demonstration images from the case page."
+      }
+    },
+    {
+      "id": "SYN014-IMG-01",
+      "kind": "image",
+      "timestamp": "2026-10-02T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-014.json",
+        "jsonPointer": "/evidence/1",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "Synthetic illustration. Submitted linkage and timestamps do not establish capture truth or causation."
+      ],
+      "payload": {
+        "assetUrl": "/damage-demo/seat-view-1.png",
+        "mimeType": "image/png",
+        "sizeBytes": 17744,
+        "hash": "d325e42a447e0675ae9e60de781ed93ebb382d03973ceba1fceb9291377cba49",
+        "captureAt": "2026-09-25T18:30:00+08:00",
+        "metadata": {
+          "tripId": "TRIP-SYN-014",
+          "fixtureDescription": "Context view: drawn seat with a demonstration mark. Before/after comparison and responsibility remain unknown."
+        },
+        "angles": [
+          "Context view"
+        ],
+        "sufficiency": "missing_context"
+      }
+    },
+    {
+      "id": "SYN014-IMG-02",
+      "kind": "image",
+      "timestamp": "2026-10-02T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-014.json",
+        "jsonPointer": "/evidence/2",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "Synthetic illustration. Submitted linkage and timestamps do not establish capture truth or causation."
+      ],
+      "payload": {
+        "assetUrl": "/damage-demo/seat-view-2.png",
+        "mimeType": "image/png",
+        "sizeBytes": 17936,
+        "hash": "32f7de23e91d4320a250f0af5b3edff68c8362cf161702e2aa0ed1984279d7b4",
+        "captureAt": "2026-09-25T18:30:00+08:00",
+        "metadata": {
+          "tripId": "TRIP-SYN-014",
+          "fixtureDescription": "Close-up view: drawn seat with a demonstration mark. Before/after comparison and responsibility remain unknown."
+        },
+        "angles": [
+          "Close-up view"
+        ],
+        "sufficiency": "missing_context"
+      }
+    },
+    {
+      "id": "SYN014-IMG-03",
+      "kind": "image",
+      "timestamp": "2026-10-02T18:30:00+08:00",
+      "source": {
+        "dataset": "fixtures/cases/SYN-014.json",
+        "jsonPointer": "/evidence/3",
+        "provenance": "synthetic"
+      },
+      "qualityIssues": [
+        "Synthetic illustration. Submitted linkage and timestamps do not establish capture truth or causation."
+      ],
+      "payload": {
+        "assetUrl": "/damage-demo/seat-view-3.png",
+        "mimeType": "image/png",
+        "sizeBytes": 17301,
+        "hash": "f0ec14b11f257d078e64fee65081537578f39d67e9645896842d94d0ce221bef",
+        "captureAt": "2026-09-25T18:30:00+08:00",
+        "metadata": {
+          "tripId": "TRIP-SYN-014",
+          "fixtureDescription": "Side view: drawn seat with a demonstration mark. Before/after comparison and responsibility remain unknown."
+        },
+        "angles": [
+          "Side view"
+        ],
+        "sufficiency": "missing_context"
+      }
+    }
+  ],
+  "policyVersion": "ryde-cleaning-20261002",
+  "suppliedPolicyId": null,
+  "provenance": "synthetic",
+  "derivedFrom": "SYN-009",
+  "changeLog": [
+    "Separate synthetic example using the public Ryde policy snapshot retrieved 2 Oct 2026. Original demo examples remain unchanged."
+  ]
+}

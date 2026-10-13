@@ -1,0 +1,18 @@
+{
+  "tripId": "TRIP-SYN-006",
+  "sourceType": "simulated",
+  "note": "Simulated platform source records for the labelled demo dataset. Not a real Ryde API, and deliberately containing no expected ruling — only measurements a source system would hold.",
+  "tools": {
+    "trip_telemetry": {
+      "status": "found",
+      "recordIds": ["TELEM-SYN006-01"],
+      "note": "Device telemetry for this trip reports a per-fix accuracy radius that the case record did not carry.",
+      "samples": [
+        { "sampleId": "SYN006-GPS-01", "accuracyMeters": 8 },
+        { "sampleId": "SYN006-GPS-02", "accuracyMeters": 8 },
+        { "sampleId": "SYN006-GPS-03", "accuracyMeters": 9 },
+        { "sampleId": "SYN006-GPS-04", "accuracyMeters": 8 }
+      ]
+    }
+  }
+}

@@ -1,0 +1,41 @@
+node_modules/
+.next/
+out/
+coverage/
+
+# Local runtime state. Never commit run records, events or generated cases.
+data/runtime/
+data/runtime-test/
+
+# Secrets. .env.example holds placeholders only.
+.env
+.env.local
+.env.*.local
+
+# Build artefacts
+*.tsbuildinfo
+next-env.d.ts
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+
+.next-production/
+
+# All local environment credentials except the safe template
+.env.*
+!.env.example
+
+# Session namespaces, rehearsal state, and developer captures
+data/runtime*/
+.screens/
+.verify/
+.workbuddy-ai/
+/*.png
+docs/rehearsal/
+docs/screenshots/
+docs/*-live-report.json
+docs/vision-key-check.json
+
+# Other local caches
+*.log

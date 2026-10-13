@@ -1,0 +1,45 @@
+{
+  "note": "Reviewed labels for the synthetic evaluation set. These are the outcomes a human reviewer recorded for each derived case, written from the fixture intent BEFORE the engine was run against them. NO RUNTIME AGENT MAY READ THIS FILE: it exists for the evaluation report and for the precedent activation gate only. A test asserts that nothing under src/agents or src/providers imports it.",
+  "labels": [
+    {
+      "caseId": "EVAL-001",
+      "expectedDisposition": "uphold",
+      "rationale": "Six-metre accuracy places the vehicle inside the 50 m radius, sampling continuity holds, the wait exceeded the threshold and contact was attempted."
+    },
+    {
+      "caseId": "EVAL-002",
+      "expectedDisposition": "refund",
+      "rationale": "The driver's stationary fixes are hundreds of metres from the pickup point, so the vehicle was never inside the zone and the no-show fee is not supported."
+    },
+    {
+      "caseId": "EVAL-003",
+      "expectedDisposition": "human_review",
+      "rationale": "Without an accuracy radius the pickup-zone rule cannot classify the sample, so no automatic outcome is available."
+    },
+    {
+      "caseId": "EVAL-004",
+      "expectedDisposition": "human_review",
+      "rationale": "The governing waiting clock is undefined and the choice of clock changes whether the threshold is met. This is a policy question, not a data gap."
+    },
+    {
+      "caseId": "EVAL-005",
+      "expectedDisposition": "uphold",
+      "rationale": "The deviation was verified as rider-approved before it was taken, so no excess-route refund is owed."
+    },
+    {
+      "caseId": "EVAL-006",
+      "expectedDisposition": "refund",
+      "rationale": "The deviation is verified as unjustified and an eligible excess-route surcharge is identified, so the surcharge is refunded up to the disputed amount."
+    },
+    {
+      "caseId": "EVAL-007",
+      "expectedDisposition": "human_review",
+      "rationale": "An explicit safety allegation is present, so the case routes to a human and is never resolved by the model, whatever the fare evidence shows."
+    },
+    {
+      "caseId": "EVAL-008",
+      "expectedDisposition": "human_review",
+      "rationale": "The accuracy radius is absent from the case record and the simulated source holds no record, so the zone stays indeterminate."
+    }
+  ]
+}

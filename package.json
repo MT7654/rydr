@@ -1,0 +1,36 @@
+{
+  "name": "rydr",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rydr - Ride disputes, resolved. Evidence-backed dispute resolution prototype.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "node scripts/production.mjs build",
+    "start": "node scripts/production.mjs start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "next": "15.5.27",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.5",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.1",
+    "@types/node": "22.20.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.1",
+    "globals": "16.5.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.0",
+    "vitest": "5.0.3"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}
