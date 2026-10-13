@@ -93,7 +93,7 @@ export function CollectionPanel({
       <h2 className="section-title">Disputed facts</h2>
 
       <p className="small muted" style={{ maxWidth: '68ch' }}>
-        Collection runs before any agent is invoked. It consults only allowlisted simulated
+        Collection runs before the advocates are invoked. It consults only allowlisted simulated
         sources, applies what it actually retrieved as one new case version, and stops honestly
         when a record is missing, contradictory, or a question only a policy owner can answer.
       </p>
@@ -129,6 +129,7 @@ export function CollectionPanel({
       )}
 
       {job ? <p className="collection-note">{job.note}</p> : null}
+      {job?.planner?<p className="small"><strong>Live collection planning</strong> · {job.planner.reason} · {job.toolCallCount} bounded source call(s). Source responses are simulated.</p>:null}
 
       {conditions.length > 0 ? (
         <div className="collection-block">

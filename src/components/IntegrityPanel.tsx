@@ -19,7 +19,7 @@ export function IntegrityPanel({ assessment, variant = 'default' }: Props) {
     return (
       <section className={variant === 'card' ? 'card' : ''}>
         <h3 className="section-heading">Integrity assessment</h3>
-        <p className="text-secondary">No tampering signals detected.</p>
+        <p className="text-secondary">No configured integrity or behavioral signals detected. This does not certify authenticity.</p>
       </section>
     );
   }
@@ -45,7 +45,7 @@ export function IntegrityPanel({ assessment, variant = 'default' }: Props) {
               <span className={`badge ${severityTone[signal.severity] ?? 'badge--low'}`}>
                 {signal.severity}
               </span>
-              <code className="signal-code">{signal.code}</code>
+              <span className="signal-code">{signal.code.replaceAll('_',' ')}</span>
             </div>
             <p className="signal-explanation">{signal.explanation}</p>
             {signal.evidenceIds.length > 0 && (
@@ -58,7 +58,7 @@ export function IntegrityPanel({ assessment, variant = 'default' }: Props) {
       </ul>
       {assessment.triggersReview && (
         <p className="integrity-notice">
-          This assessment triggered a review task. A human reviewer will examine the signals before
+          These inspection signals require human review; they are not a fraud verdict. A reviewer examines them before
           the case is settled.
         </p>
       )}

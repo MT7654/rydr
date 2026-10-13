@@ -23,6 +23,7 @@ import { PartyHistory } from './PartyHistory';
 import { WorkspaceHeader } from './WorkspaceHeader';
 import { WorkspaceProgress } from './WorkspaceProgress';
 import { NextActionPanel } from './NextActionPanel';
+import { AssuranceJourney } from '@/components/AssuranceJourney';
 
 const SECTIONS = [['brief','Brief'],['assessment','Assessment'],['evidence','Evidence'],['decision','Decision'],['outcome','Outcome'],['history','Case record']] as const;
 export function ReviewerWorkspace({data,workbench,taskOptions,notice,error,mode='fixture',payments,caseVersions=[],runs=[]}: {
@@ -45,13 +46,16 @@ export function ReviewerWorkspace({data,workbench,taskOptions,notice,error,mode=
   <div className="workspace-grid"><div className="workspace-canvas">
   {section==='brief'?<><section className="card"><h2>What is disputed</h2><ReadableText text={record.riderStatement??'No rider statement recorded.'}/>{record.driverStatement?<details><summary>Driver account</summary><ReadableText text={record.driverStatement}/></details>:null}</section><EvidenceBrief record={record} evaluation={packet.evaluation} pack={packet.pack}/><PolicyBasis pack={packet.pack} suppliedSample={record.suppliedPolicyId!==null}/></>:null}
   {section==='assessment'?<section id="assessment" className="stack">
-   {packet.run&&!packet.runStaleAgainstCurrentVersion?<RunMonitor key={packet.run.id} caseId={id} runId={packet.run.id} initialRun={packet.run} findings={packet.evaluation.findings} initialCalls={packet.providerCalls}/>:<section className="card"><h2>{packet.runStaleAgainstCurrentVersion?'Assess updated evidence':'Assess both accounts'}</h2><p>Two advocates examine the records. The judge applies the governing policy and refers unresolved cases to a reviewer.</p>{!data.historical?<RunLauncher caseId={id} mode={mode}/>:<p>No assessment is available in this historical record.</p>}</section>}
+   {packet.run&&!packet.runStaleAgainstCurrentVersion?<RunMonitor key={packet.run.id} caseId={id} runId={packet.run.id} initialRun={packet.run} findings={packet.evaluation.findings} initialCalls={packet.providerCalls}/>:<section className="card"><h2>{packet.runStaleAgainstCurrentVersion?'Assess updated evidence':'Assess both accounts'}</h2><p>Two advocates examine the records. The judge applies the governing policy and refers unresolved cases to a reviewer.</p>{!data.historical?<RunLauncher caseId={id} mode={mode} includeImages={mode==='live'&&record.category==='damage'} label={record.category==='damage'?'Collect, inspect and assess':'Collect and assess both accounts'}/>:<p>No assessment is available in this historical record.</p>}</section>}
    {packet.run?.state==='failed'&&!data.historical?<RunLauncher caseId={id} mode={mode} label="Retry assessment"/>:null}
+   <AssuranceJourney record={record} run={packet.run}/>
+   {packet.collectionJob?.planner?<p className="notice">Live collection planner: {packet.collectionJob.planner.reason} · {packet.collectionJob.toolCallCount} simulated source call(s).</p>:null}
+   {record.category==='damage'?<DamageEvidencePanel key={String(packet.run?.id)+':'+packet.run?.state+':'+record.version} record={record} frozen={data.historical} mode={visionMode()} initialReceipt={packet.snapshot?.visionReceipts}/>:null}
    <details className="card"><summary>Case brief and source timeline</summary><EvidenceBrief record={record} evaluation={packet.evaluation} pack={packet.pack}/><CaseTimeline items={record.evidence.filter(e=>e.timestamp!==null)}/></details>
    <details className="card"><summary>Similar cases and evidence integrity</summary><PrecedentPanel manifest={packet.runPrecedents}/><IntegrityPanel assessment={packet.integrityAssessment}/></details>
   </section>:null}
   {section==='evidence'?<><section className="card"><h2>Source records</h2><CaseTimeline items={record.evidence.filter(e=>e.timestamp!==null)}/><details><summary>All evidence ({data.evidence.length})</summary><ul>{data.evidence.map(e=><li key={e.id}><Cite kind="evidence" id={e.id}>{e.kind.replaceAll('_',' ')} · {e.timestamp??'time not recorded'} · {e.id}</Cite></li>)}</ul></details><details><summary>Applicable rules</summary>{packet.pack.clauses.map(c=><p key={c.id}><Cite kind="policy" id={c.id}>{c.title}</Cite></p>)}</details></section>
-   <DamageEvidencePanel record={record} frozen={data.historical} mode={visionMode()}/>
+   <DamageEvidencePanel key={String(packet.run?.id)+':'+packet.run?.state+':'+record.version} record={record} frozen={data.historical} mode={visionMode()} initialReceipt={packet.snapshot?.visionReceipts}/>
    {!data.historical?<CollectionPanel caseId={id} caseVersion={record.version} plan={packet.collectionPlan} job={packet.collectionJob} sensitivity={packet.sensitivity}/>:null}
    {task?workbench:null}
   </>:null}

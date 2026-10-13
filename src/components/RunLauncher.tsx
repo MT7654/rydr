@@ -17,6 +17,7 @@ export function RunLauncher({
   label,
   variant = 'primary',
   forceNew = false,
+  includeImages = false,
   size,
 }: {
   caseId: string;
@@ -24,6 +25,7 @@ export function RunLauncher({
   label?: string;
   variant?: 'primary' | 'ghost';
   forceNew?: boolean;
+  includeImages?: boolean;
   size?: 'sm';
 }) {
   const router = useRouter();
@@ -40,7 +42,7 @@ export function RunLauncher({
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          mode,
+          mode, includeImages,
           idempotencyKey: forceNew
             ? `${caseId}:intent:${Date.now().toString(36)}:${Math.random().toString(36).slice(2, 8)}`
             : undefined,
@@ -68,8 +70,9 @@ export function RunLauncher({
   return (
     <div className="stack" style={{ gap: '0.5rem' }}>
       <button type="button" className={className} onClick={start} disabled={busy}>
-        {busy ? 'Starting…' : buttonLabel}
+        {busy ? (includeImages?'Collecting and inspecting packet…':'Collecting records…') : buttonLabel}
       </button>
+      {includeImages?<p className="small">This action inspects image copies through Tencent storage and AI, checks embedded provenance locally, then starts the advocates. Originals and observations are preserved.</p>:null}
       {error ? (
         <div className="notice notice--danger" role="alert">
           {error}

@@ -1,0 +1,3 @@
+# C2PA trust anchors
+
+Public certificates retrieved on 13 October 2026 from https://contentcredentials.org/trust/anchors.pem, as referenced by the Content Authenticity Initiative SDK read/verification guide: https://opensource.contentauthenticity.org/docs/tasks/read/. These are public trust anchors, not private signing keys. Runtime image checks do not follow image-provided remote URLs and disable online OCSP fetches. An embedded signature can be valid while its signer is untrusted. Credentials do not certify liability, capture time, or scene truth. Update the bundled anchors through a reviewed release; their retrieval date is not an expiry guarantee.

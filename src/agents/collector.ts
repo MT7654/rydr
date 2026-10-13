@@ -13,6 +13,8 @@ import {
   saveCollectionJob,
 } from '../repositories/collectionJobs';
 import { readSource } from '../tools/sourceTools';
+import { planLiveCollection } from './collectionPlanner';
+import { withLock } from '../repositories/store';
 
 /**
  * The bounded evidence collection cycle.
@@ -203,7 +205,10 @@ export function applySourceRecords(
  * Idempotent on `collect:<caseId>:v<version>`: a duplicate click reuses the job
  * that version already produced rather than spending a second cycle.
  */
-export async function collectForCase(caseId: string): Promise<CollectionJob> {
+export async function collectForCase(caseId: string, options: {mode?:string} = {}): Promise<CollectionJob> {
+  return withLock('collect:'+caseId,()=>collectCaseVersion(caseId,options));
+}
+async function collectCaseVersion(caseId: string, options: {mode?:string}): Promise<CollectionJob> {
   const caseRecord = await getCase(caseId);
   if (!caseRecord) throw new Error(`Unknown case: ${caseId}`);
   const pack: PolicyPack = await getPolicyPack(caseRecord.policyVersion);
@@ -265,7 +270,8 @@ export async function collectForCase(caseId: string): Promise<CollectionJob> {
     });
   }
 
-  const requests = plan.requests.slice(0, MAX_SOURCE_CALLS_PER_CYCLE);
+  const planner=options.mode==='live'?await planLiveCollection(plan):undefined;
+  const requests = planner?planner.requestIds.map(id=>plan.requests.find(r=>r.id===id)!):plan.requests.slice(0, MAX_SOURCE_CALLS_PER_CYCLE);
   const results: SourceResult[] = [];
   for (const request of requests) {
     results.push(await readSource(request));
@@ -285,6 +291,7 @@ export async function collectForCase(caseId: string): Promise<CollectionJob> {
       ...base,
       status: 'blocked',
       stopReason: 'conflict',
+      planner,
       results,
       resultingVersion: null,
       toolCallCount: results.length,
@@ -298,7 +305,7 @@ export async function collectForCase(caseId: string): Promise<CollectionJob> {
   if (candidate) {
     const next = await appendCaseVersion(
       caseId,
-      (current) => applySourceRecords(current, found, base.id)?.next ?? current,
+      (current) => {if(current.version!==caseRecord.version)throw new Error('Case changed while collecting. Reopen current evidence before assessing.');return applySourceRecords(current, found, base.id)?.next ?? current;},
       `Evidence collection job ${base.id} applied source records: ${candidate.applied.join(' ')}`,
     );
     resultingVersion = next.version;
@@ -328,6 +335,7 @@ export async function collectForCase(caseId: string): Promise<CollectionJob> {
     ...base,
     status,
     stopReason,
+    planner,
     results,
     resultingVersion,
     toolCallCount: results.length,

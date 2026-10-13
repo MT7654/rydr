@@ -2,11 +2,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { CaseRecord } from '@/domain/contracts';
-export function DamageEvidencePanel({ record, frozen, mode }: { record: CaseRecord; frozen: boolean; mode: 'fixture' | 'live' | 'blocked' }) {
+export function DamageEvidencePanel({ record, frozen, mode, initialReceipt }: { record: CaseRecord; frozen: boolean; mode: 'fixture' | 'live' | 'blocked'; initialReceipt?:unknown }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
-  const [analysis, setAnalysis] = useState<unknown>(null);
+  const [analysis, setAnalysis] = useState<unknown>(()=>{if(!initialReceipt||typeof initialReceipt!=='object')return null;const receipts=initialReceipt as {live?:unknown;fixture?:unknown};return mode==='live'?receipts.live:receipts.fixture;});
   useEffect(() => {
     if (frozen || record.category !== 'damage' || mode === 'blocked') return;
     let active = true;
@@ -15,7 +15,7 @@ export function DamageEvidencePanel({ record, frozen, mode }: { record: CaseReco
   }, [record.id, record.version, record.category, frozen, mode]);
   if (record.category !== 'damage') return null;
   const images = record.evidence.filter(e => e.kind === 'image');
-  const observations = analysis && typeof analysis === 'object' && 'observations' in analysis && Array.isArray(analysis.observations) ? analysis.observations as { evidenceId: string; observation: { description: string; sufficiency: string } }[] : [];
+  const observations = analysis && typeof analysis === 'object' && 'observations' in analysis && Array.isArray(analysis.observations) ? analysis.observations as { evidenceId: string; checks?: {credential:string;origin:string;timeMatch:string;captureAt:string|null}; observation: { description: string; sufficiency: string } }[] : [];
   async function submit(data: FormData) {
     setBusy(true); setMessage(''); data.set('version', String(record.version));
     try {
@@ -45,7 +45,7 @@ export function DamageEvidencePanel({ record, frozen, mode }: { record: CaseReco
       <p>{mode === 'live' ? 'Inspect images sends metadata-stripped copies to Tencent’s publicly accessible image storage for AI analysis. Originals stay in the case record. Results are saved for this case version; refreshing does not repeat AI calls.' : 'Sample mode provides scripted annotations. A reviewer must inspect the original images.'}</p>
     </>}
     {message && <p role="status">{message}</p>}
-    {observations.map(entry => <article key={entry.evidenceId} className="surface"><h3>Visible observations</h3><p>{entry.observation.description}</p><p className="small">Visual coverage: {entry.observation.sufficiency.replaceAll('_', ' ')}. Trip linkage and responsibility remain unverified.</p></article>)}
+    {observations.map(entry => <article key={entry.evidenceId} className="surface"><h3>Visible observations</h3><p>{entry.observation.description}</p>{entry.checks?<dl className="metadata-grid"><div><dt>Content credentials</dt><dd>{entry.checks.credential.replaceAll('_',' ')}</dd></div><div><dt>Declared origin</dt><dd>{entry.checks.origin.replaceAll('_',' ')}</dd></div><div><dt>Trip time check</dt><dd>{entry.checks.timeMatch.replaceAll('_',' ')}</dd></div></dl>:null}<p className="small">Unknown provenance is not a finding of fraud. A matching time or valid credential does not prove who caused damage.</p><p className="small">Visual coverage: {entry.observation.sufficiency.replaceAll('_', ' ')}. Trip linkage and responsibility remain unverified.</p></article>)}
     {analysis != null && <details className="audit-disclosure"><summary>Image analysis receipt & audit</summary><pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{JSON.stringify(analysis, null, 2)}</pre></details>}
   </section>;
 }

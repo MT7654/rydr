@@ -41,6 +41,7 @@ interface SourceFixture {
 }
 
 export function sourceFixturePath(tripId: string): string {
+  if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(tripId)) throw new Error('Invalid trip source identifier.');
   return path.join(SOURCES_DIR, `${tripId}.json`);
 }
 

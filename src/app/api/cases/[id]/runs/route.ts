@@ -5,6 +5,8 @@ import { orchestratorConfig, LiveProviderUnavailableError } from '@/lib/runtime'
 import { getCase } from '@/repositories/cases';
 import type { ExecutionMode } from '@/domain/contracts';
 import type { CollectionJob } from '@/domain/collection';
+import { analyzeDamageImages } from '@/lib/damageEvidence';
+import { mutationRole } from '@/lib/journeyApi';
 
 /**
  * Starts a run and returns its persisted id immediately. Execution continues in
@@ -18,8 +20,9 @@ import type { CollectionJob } from '@/domain/collection';
  */
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
+  if(await mutationRole(request)!=='reviewer')return NextResponse.json({message:'Reviewer access required.'},{status:403});
 
-  let body: { mode?: string; idempotencyKey?: string } = {};
+  let body: { mode?: string; idempotencyKey?: string; includeImages?: boolean } = {};
   try {
     body = (await request.json()) as typeof body;
   } catch {
@@ -39,7 +42,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   let collection: CollectionJob | null = null;
   if (mode !== 'replay') {
     try {
-      collection = await collectForCase(id);
+      collection = await collectForCase(id,{mode});
     } catch (error) {
       return NextResponse.json(
         {
@@ -53,6 +56,10 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 
   try {
     const config = orchestratorConfig(mode);
+    if(body.includeImages && mode!=='replay') {
+      const current=await getCase(id);
+      if(current?.category==='damage')await analyzeDamageImages(id,current.version);
+    }
     const run = await beginRun(id, mode, config, body.idempotencyKey);
     // A failed run is returned as-is; the monitor shows the recorded failure.
     return NextResponse.json(

@@ -6,6 +6,8 @@ import { RUNTIME_DIR, readJson, writeJsonAtomic, withLock } from '@/repositories
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { IMAGE_ANALYST_PROMPT } from '@/providers/vision';
+import { inspectPhotoProvenance } from './imageProvenance';
+import { readFile } from 'node:fs/promises';
 
 export async function attachDamageImage(caseId: string, file: File, expectedVersion: number) {
   if (file.size > MAX_IMAGE_BYTES) throw new Error('Maximum image size is 5 MB.');
@@ -26,7 +28,7 @@ export async function attachDamageImage(caseId: string, file: File, expectedVers
   }, `Added image ${id}; SHA-256 ${asset.hash}.`);
 }
 export function visionReceiptFile(caseId: string, version: number, mode: string) {
-  const fingerprint=createHash('sha256').update(JSON.stringify([IMAGE_ANALYST_PROMPT,visionProvider()?.id,process.env.RYDR_VISION_MODEL,process.env.RYDR_ADP_VISION_APPKEY,process.env.RYDR_ADP_PUBLIC_IMAGE_UPLOADS_AUTHORIZED])).digest('hex').slice(0,12);
+  const fingerprint=createHash('sha256').update(JSON.stringify(['provenance-v1',IMAGE_ANALYST_PROMPT,visionProvider()?.id,process.env.RYDR_VISION_MODEL,process.env.RYDR_ADP_VISION_APPKEY,process.env.RYDR_ADP_PUBLIC_IMAGE_UPLOADS_AUTHORIZED])).digest('hex').slice(0,12);
   return path.join(RUNTIME_DIR, 'vision', `${caseId.replace(/[^a-zA-Z0-9_-]/g, '_')}-v${version}-${mode}-${fingerprint}.json`);
 }
 /** Bounded explicit requests, cached per version/mode. No retries or fallback. */
@@ -43,13 +45,16 @@ export async function analyzeDamageImages(caseId: string, expectedVersion: numbe
     if (existing && (!retry || existing.status === 'completed')) return existing;
     if(existing && retry && (existing.attempt ?? 1)>=2)throw new Error('Two image-analysis attempts already recorded. Review the images manually.');
     if(existing?.status === 'started' && Date.now()-Date.parse(existing.startedAt)<10*60*1000)throw new Error('Image analysis is still in progress.');
-    const receipt = { caseId, caseVersion: record.version, mode: provider.mode, providerId: provider.id, attempt:(existing?.attempt ?? 0)+1, model: provider.mode === 'live' ? process.env.RYDR_VISION_MODEL ?? 'agent-configured' : 'scripted', promptVersion: 'vision-v2', startedAt: new Date().toISOString(), status: 'started', observations: [] as unknown[] };
+    const receipt = { caseId, caseVersion: record.version, mode: provider.mode, providerId: provider.id, attempt:(existing?.attempt ?? 0)+1, model: provider.mode === 'live' ? process.env.RYDR_VISION_MODEL ?? 'agent-configured' : 'scripted', promptVersion: 'vision-v3-provenance', startedAt: new Date().toISOString(), status: 'started', observations: [] as unknown[] };
     // Persist before calling: a refresh cannot repeat a paid failed attempt.
     await writeJsonAtomic(file, receipt);
     try {
       for (const image of images) {
-        const bytes = provider.mode === 'live' && provider.id !== 'adp-image-understanding' ? await readImage(image.payload.hash, true) : undefined;
-        receipt.observations.push({ evidenceId: image.id, hash: image.payload.hash, observation: await provider.analyze(image, bytes) });
+        const supplied=/^\/damage-demo\/seat-view-[123]\.png$/.test(image.payload.assetUrl);
+        const bytes=supplied?await readFile(path.join(process.cwd(),'public',image.payload.assetUrl.slice(1))):await readImage(image.payload.hash,true);
+        if(createHash('sha256').update(bytes).digest('hex')!==image.payload.hash)throw new Error('Original image hash mismatch.');
+        const checks=await inspectPhotoProvenance(bytes,image.payload.mimeType,record.trip.scheduledAt);
+        receipt.observations.push({ evidenceId: image.id, hash: image.payload.hash, checks, observation: await provider.analyze(image, bytes) });
       }
       receipt.status = 'completed';
     } catch {

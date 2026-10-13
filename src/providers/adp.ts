@@ -184,7 +184,7 @@ export function createAdpProvider(endpoint: string): AgentProvider {
       const requestId = randomUUID();
       if (!await reserveProviderAttempt()) throw new ProviderError('The shared daily AI allowance has been reached. Use sample assessment or return after the UTC daily reset.', 'cap_exhausted');
       const visitor = createHash('sha256').update(`${await currentStorageSession() ?? 'local'}:${request.role}`).digest('hex').slice(0,32);
-      const conversationId = makeConversationId(`${visitor}:${request.runId}`, request.role);
+      const conversationId = makeConversationId(`${visitor}:${request.runId}`, request.stage === 'assess_risk' ? `${request.role}:risk` : request.role);
 
       const body = {
         RequestId: requestId,

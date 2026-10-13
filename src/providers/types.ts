@@ -4,7 +4,7 @@ import type {
 } from '../domain/contracts';
 
 export type AgentRole = 'rider' | 'driver' | 'judge' | 'navigator' | 'vision';
-export type AgentStage = 'select_evidence' | 'build_case' | 'judge' | 'navigate' | 'analyze_image';
+export type AgentStage = 'select_evidence' | 'build_case' | 'judge' | 'navigate' | 'analyze_image' | 'plan_collection' | 'assess_risk';
 
 export interface ProviderCapabilities {
   nativeTools: boolean;

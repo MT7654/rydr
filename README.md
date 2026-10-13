@@ -34,7 +34,16 @@ npm run build
 npm start -- --port 3000
 ```
 
-Production uses `.next-production` separately from the development build. The latest repair verification passed 380 tests, with 8 optional external integration tests skipped; live ADP assessment and Case Navigator were also checked through the browser.
+Production uses `.next-production` separately from the development build. The latest repair verification passed 390 tests, with 8 optional external integration tests skipped; live ADP assessment and Case Navigator were also checked through the browser.
+
+## Submission assets
+
+- [16:9 cover](submission/rydr-cover-1920x1080.png)
+- [Architecture diagram](submission/rydr-architecture-v2.png) ([editable SVG](submission/rydr-architecture-v2.svg))
+- [Project description and blurb](submission/project-description.md)
+- [Stretch completion and live rehearsal](docs/33-stretch-completion-and-recorded-demo.md)
+
+The browser rehearsal used actual live ADP responses. Video materials remain local and are not published. Unavailable platform sources and financial movements are labelled simulations. Live collection planning and risk reasoning reuse configured deployments in distinct tasks; image inspection includes local content-credential checks. Photo origin without credentials remains unknown.
 
 ## Documentation
 

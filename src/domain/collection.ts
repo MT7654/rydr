@@ -127,6 +127,7 @@ export const SourceResultSchema = z.object({
 export type SourceResult = z.infer<typeof SourceResultSchema>;
 
 export const CollectionJobSchema = z.object({
+  planner: z.object({mode:z.literal('live'),reason:z.string(),requestIds:z.array(z.string()),runId:z.string()}).optional(),
   id: z.string().min(1),
   caseId: z.string().min(1),
   startingVersion: z.number().int().positive(),

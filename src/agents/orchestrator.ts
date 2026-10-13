@@ -23,6 +23,10 @@ import {
   updateRun,
 } from '../repositories/runs';
 import { fingerprint } from '../lib/hash';
+import { enrichImageCatalog } from '../lib/multimodalPacket';
+import { assessBehaviorRisk, combineRisk } from '../domain/behaviorRisk';
+import { getAllCases } from '../repositories/cases';
+import { RISK_REASONER_PROMPT,riskInput,validateRiskReasoning } from './riskReasoner';
 import { currentStorageSession, withStorageSession } from '../repositories/store';
 import { captureRunSnapshot, getRunSnapshot } from '../repositories/snapshots';
 import { recordProviderCall } from '../repositories/providerCalls';
@@ -159,7 +163,7 @@ async function prepare(caseId: string): Promise<PreparedRun> {
   }
   const evaluation = evaluateCase(caseRecord, pack);
   const quality = scoreEvidence(caseRecord, evaluation, pack.thresholds);
-  const catalog = buildCatalog(caseRecord);
+  const catalog = await enrichImageCatalog(caseRecord.id,caseRecord.version,buildCatalog(caseRecord));
   const bundle = buildDeterministicBundle(caseRecord, evaluation, quality);
   const clauses = toClauseRefs(pack.clauses.filter((c) => c.category === caseRecord.category));
   return {
@@ -273,6 +277,7 @@ async function resolveRunStart(
 
   const inputHash = fingerprint({
     case: prepared.caseRecord,
+    multimodalCatalog: prepared.catalog,
     evidenceSelection: config.localEvidenceSelection ? 'local' : 'model',
     policyVersion: prepared.pack.version,
     promptVersion: PROMPT_VERSION,
@@ -464,9 +469,9 @@ export async function executeRun(
     }
     const { caseRecord, evaluation, quality, catalog, bundle, clauses, precedents } = prepared;
 
-    // Integrity assessment runs in parallel with the advocate pipeline. It does
-    // not block the main run, and its result does not change disposition.
-    integrityPromise = Promise.resolve().then(() => assessIntegrity(runId, caseRecord));
+    // Risk inspection runs alongside the advocates. Signals do not decide liability;
+    // unresolved inspection can hold settlement, and failed analysis remains explicit.
+
 
     await appendEvent(runId, {
       runId,
@@ -504,6 +509,18 @@ export async function executeRun(
       await updateRun(runId, (current) => ({ ...current, callCount: calls }));
     };
 
+    integrityPromise = getAllCases().then(async peers=>{
+      const assessment=combineRisk(assessIntegrity(runId,caseRecord),assessBehaviorRisk(caseRecord,peers));
+      if(!config.provider.external)return assessment;
+      await spend(1,'judge');
+      const reply=await invokeWithTelemetry({runId,config,repair:false,request:{role:'judge',stage:'assess_risk',runId,systemInstruction:RISK_REASONER_PROMPT,input:riskInput(caseRecord),allowedEvidenceIds:catalog.map(e=>e.id),timeoutMs:config.timeoutMs,maxOutputTokens:1100}});
+      const reasoning=validateRiskReasoning(reply.output,caseRecord);
+      const combined=combineRisk(assessment,{score:0,band:'low',signals:reasoning.signals,reviewOnly:true});
+      await appendEvent(runId,{runId,actor:'system',type:'risk:reasoned',summary:reasoning.summary});
+      return combined;
+    });
+    // Attach a rejection handler immediately; the awaited gate below still fails explicitly.
+    void integrityPromise.catch(()=>undefined);
     await transition(runId, 'advocates_running', 'Rider and Driver advocates are gathering evidence.');
 
     const advocates: Record<'rider' | 'driver', Awaited<ReturnType<typeof runAdvocate>>> = {
@@ -537,7 +554,9 @@ export async function executeRun(
     run = await transition(runId, 'judging', 'Judge is comparing both validated cases.');
 
     await spend(1, 'judge');
-    const judgeIntegrity = await integrityPromise.catch(() => null);
+    const judgeIntegrity = await integrityPromise;
+    // Persist and queue before any automatic settlement can occur.
+    await updateRun(runId,current=>({...current,integrityAssessment:judgeIntegrity}));
     const judgeInput = JudgeInputSchema.parse({
       phase: 'judge',
       integrity: judgeIntegrity,
@@ -678,7 +697,7 @@ export async function executeRun(
 
     // Turn the finished analysis into an operational outcome: either an
     // automatic simulated settlement, or exactly one open review task.
-    const integrityAssessment = await integrityPromise.catch(() => null as IntegrityAssessment | null);
+    const integrityAssessment = await integrityPromise!.catch(() => null as IntegrityAssessment | null);
     if (integrityAssessment) {
       await updateRun(runId, (current) => ({ ...current, integrityAssessment }));
       await appendEvent(runId, {

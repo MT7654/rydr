@@ -2861,3 +2861,6 @@ details[open] > summary { margin-bottom: .7rem; }
 @media (prefers-reduced-motion: reduce) {
   .workspace *, .navigator-panel * { transition: none !important; animation: none !important; }
 }
+
+/* Evidence assurance sits within the existing case path. */
+.assurance-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.2rem;margin:1rem 0}.assurance-steps>div{border-inline-start:3px solid #f53267;padding-inline-start:1rem}.assurance-steps p{font-size:.88rem;line-height:1.5;margin:.5rem 0}.assurance-journey h2{font-size:1.2rem}@media(max-width:1100px){.assurance-steps{grid-template-columns:1fr;gap:.75rem}}

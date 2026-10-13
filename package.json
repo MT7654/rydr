@@ -13,11 +13,13 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@contentauth/c2pa-node": "^0.9.9",
+    "exif-reader": "^2.0.3",
     "next": "15.5.27",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "zod": "4.6.5",
-    "sharp": "0.35.5"
+    "sharp": "0.35.5",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@eslint/js": "9.39.1",
@@ -25,6 +27,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "eslint": "9.39.1",
+    "ffmpeg-static": "^5.3.0",
     "globals": "16.5.0",
     "typescript": "5.9.3",
     "typescript-eslint": "8.71.0",
@@ -32,5 +35,9 @@
   },
   "engines": {
     "node": ">=22.12.0"
+  },
+  "allowScripts": {
+    "@contentauth/c2pa-node@0.9.9": true,
+    "ffmpeg-static@5.3.0": true
   }
 }

@@ -117,6 +117,9 @@ async function complete(run: RunRecord): Promise<CompletionOutcome> {
         taskId: task.id,
         note: 'Escalation task created for a reviewer.',
       };
+    } else if (run.integrityAssessment?.triggersReview) {
+      const {task}=await ensureReviewTask({caseId:run.caseId,caseVersion:run.caseVersion,runId:run.id,kind:'integrity_alert',reasonCodes:run.integrityAssessment.signals.map(s=>'integrity_'+s.code),reasonSummary:'Evidence risk requires inspection before any settlement.',openQuestions:run.integrityAssessment.signals.map(s=>s.explanation),integritySeverity:run.integrityAssessment.overallSeverity});
+      outcome={kind:'review_task',taskId:task.id,note:'Risk inspection blocks automatic settlement; no accusation of fraud.'};
     } else {
       // Auto-resolution criteria: no existing decision, no open task, and a
       // disposition the automatic path is allowed to settle.

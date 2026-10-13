@@ -33,3 +33,8 @@ External submission still requires public repository verification, recorded walk
 Production build passed. Browser walkthrough verified fresh DISP-002 open; 181-second playback with unresolved entrance mismatch routed to review; private driver statement remained hidden from rider; SYN-006 source retrieval created v2 and displayed an actual sample reassessment; SYN-015 S$25 driver reimbursement remained recorded with rider recovery pending. Receipt/export endpoints passed attachment, own-account, session-isolation and missing-role checks. The in-app browser did not report a download event, so download completion there was not independently confirmed.
 
 Screenshots: D:\Rydr\tmp\rydr-v2-pickup-complete.png, rydr-v2-repair-complete.png, rydr-v2-payments-complete.png. Production build retains existing ESLint-plugin and metadataBase warnings.
+
+
+## Superseded remaining-work status — 14 October 2026
+
+Live vision was activated and verified. Collection planning, risk reasoning and provenance inspection were extended and rehearsed. See docs/33-stretch-completion-and-recorded-demo.md and submission/ for current status and deliverables.

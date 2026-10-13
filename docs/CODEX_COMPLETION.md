@@ -74,3 +74,8 @@ See `synthetic-evaluation-report.json` for measured results, sample size and lim
 TypeScript, ESLint, the non-live suite and a production build were checked. UI smoke checks cover the case, investigation and resolution handoff. No live ADP or paid vision calls were made during completion. Near-duplicate detection, AI-generated-image detection, visual redaction and causal attribution are not validated production capabilities; near duplicates are inspection suggestions only, and the other capabilities are not claimed.
 
 
+
+
+## Current status — 14 October 2026
+
+The bridge/pending-vision configuration above is historical. Native live ADP image transport is configured and verified; see docs/22-live-vision-integration.md. The completed assurance paths, 390 passing tests and recorded 7:50 demo are documented in docs/33-stretch-completion-and-recorded-demo.md. Submission assets are in submission/.
