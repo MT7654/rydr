@@ -11,12 +11,19 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "judge:verify": "vitest run tests/judge-evaluation.test.ts"
+    "judge:verify": "vitest run tests/judge-evaluation.test.ts",
+    "db:migrate": "node scripts/neon-migrate.mjs",
+    "test:neon": "node scripts/neon-e2e.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1151.0",
     "@contentauth/c2pa-node": "^0.9.9",
+    "@neon/config": "^1.9.1",
+    "@neon/env": "^1.6.2",
+    "@vercel/functions": "^3.10.1",
     "exif-reader": "^2.0.3",
     "next": "15.5.27",
+    "pg": "^8.23.1",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "sharp": "0.35.5",
@@ -25,6 +32,7 @@
   "devDependencies": {
     "@eslint/js": "9.39.1",
     "@types/node": "22.20.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "eslint": "9.39.1",
@@ -40,5 +48,8 @@
   "allowScripts": {
     "@contentauth/c2pa-node@0.9.9": true,
     "ffmpeg-static@5.3.0": true
+  },
+  "overrides": {
+    "postcss": "8.5.30"
   }
 }

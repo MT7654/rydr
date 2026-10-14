@@ -27,7 +27,9 @@ import { enrichImageCatalog } from '../lib/multimodalPacket';
 import { assessBehaviorRisk, combineRisk } from '../domain/behaviorRisk';
 import { getAllCases } from '../repositories/cases';
 import { RISK_REASONER_PROMPT,riskInput,validateRiskReasoning } from './riskReasoner';
-import { currentStorageSession, withStorageSession } from '../repositories/store';
+import { waitUntil } from '@vercel/functions';
+import { afterStorageCommit } from '../repositories/neon';
+import { currentStorageSession, withStorageSession, withLock } from '../repositories/store';
 import { captureRunSnapshot, getRunSnapshot } from '../repositories/snapshots';
 import { recordProviderCall } from '../repositories/providerCalls';
 import { judgeReasoningSummary } from './explanation';
@@ -267,7 +269,7 @@ function isReusableFor(
  * Concurrent starts with the same case, version, mode and input resolve to the
  * same run rather than starting a second billed execution.
  */
-async function resolveRunStart(
+async function resolveRunStartUnlocked(
   caseId: string,
   mode: ExecutionMode,
   config: OrchestratorConfig,
@@ -381,6 +383,10 @@ async function prepareFromSnapshot(runId: string): Promise<PreparedRun | null> {
   };
 }
 
+async function resolveRunStart(caseId: string, mode: ExecutionMode, config: OrchestratorConfig, idempotencyKey?: string): Promise<ResolvedRunStart> {
+  return withLock('run-start:' + caseId, () => resolveRunStartUnlocked(caseId, mode, config, idempotencyKey));
+}
+
 /**
  * Starts a run and waits for the three-agent pipeline to finish before
  * returning. Use this when the caller needs the final record; use `beginRun`
@@ -411,7 +417,7 @@ export async function beginRun(
   const session = await currentStorageSession();
   return withStorageSession(session, async () => {
     const { run, fresh } = await resolveRunStart(caseId, mode, config, idempotencyKey);
-    if (fresh) scheduleExecution(run.id, config, session);
+    if (fresh) afterStorageCommit(() => scheduleExecution(run.id, config, session));
     return run;
   });
 }
@@ -426,10 +432,10 @@ const inFlightExecutions = new Set<string>();
  * Executes a run without blocking the caller, so the HTTP response can return a
  * persisted run id immediately and the monitor can observe real progress.
  *
- * This is a bounded in-process worker, which is correct for the local demo
- * (`next dev` / `next start` on a long-lived process). A serverless host that
- * terminates request work would kill the execution — that deployment needs a
- * durable queue or a background function instead.
+ * This is a bounded worker. On Vercel its promise is registered with waitUntil.
+ * The local path uses a long-lived process. Vercel must use Fluid compute and
+ * the configured function duration; this is bounded request-attached work, not
+ * an unlimited durable job queue.
  *
  * `executeRun` records its own terminal state and error details, so a rejection
  * here means the run could not even be updated; it is swallowed deliberately
@@ -439,11 +445,13 @@ function scheduleExecution(runId: string, config: OrchestratorConfig, session: s
   const executionKey = `${session ?? 'local'}:${runId}`;
   if (inFlightExecutions.has(executionKey)) return;
   inFlightExecutions.add(executionKey);
-  void executeRun(runId, config)
+  const execution = withStorageSession(session, () => executeRun(runId, config))
     .catch(() => undefined)
     .finally(() => {
       inFlightExecutions.delete(executionKey);
     });
+  if (process.env.VERCEL) waitUntil(execution);
+  else void execution;
 }
 
 export async function executeRun(
@@ -685,7 +693,8 @@ export async function executeRun(
       ...current,
       judge,
       resolution,
-      state: gate.requiresHumanReview ? 'escalated' : 'completed',
+      // Keep the monitor active until the settlement/reviewer task is durable.
+      state: 'validating',
       stageTimingsMs: { ...current.stageTimingsMs, total: Date.now() - started },
     }));
     await appendEvent(runId, {
@@ -711,12 +720,11 @@ export async function executeRun(
     const completed = (await updateRun(runId, (current) => current)) as RunRecord;
     const outcome = await applyCompletion(completed);
 
-    return appendEvent(runId, {
-      runId,
-      actor: 'system',
-      type: `case:${outcome.kind}`,
-      summary: outcome.note,
-    });
+    return updateRun(runId, current => ({
+      ...current, state: gate.requiresHumanReview ? 'escalated' : 'completed',
+      stageTimingsMs: { ...current.stageTimingsMs, total: Date.now() - started },
+      events: [...current.events, { runId, seq: current.events.length, at: new Date().toISOString(), actor: 'system', type: `case:${outcome.kind}`, summary: outcome.note }],
+    }));
   } catch (error) {
     const providerError =
       error instanceof ProviderError
@@ -724,7 +732,7 @@ export async function executeRun(
         : new ProviderError(error instanceof Error ? error.message : String(error), 'transport');
     await updateRun(runId, (current) => ({
       ...current,
-      state: 'failed',
+      state: 'validating',
       errorCode: providerError.code,
       errorMessage: providerError.message,
     }));
@@ -742,13 +750,12 @@ export async function executeRun(
     }
 
     const failed = (await updateRun(runId, (current) => current)) as RunRecord;
-    const outcome = await applyCompletion(failed);
-    return appendEvent(runId, {
-      runId,
-      actor: 'system',
-      type: `case:${outcome.kind}`,
-      summary: outcome.note,
-    });
+    const outcome = await applyCompletion({ ...failed, state: 'failed' });
+    return updateRun(runId, current => ({
+      ...current, state: 'failed',
+      stageTimingsMs: { ...current.stageTimingsMs, total: Date.now() - started },
+      events: [...current.events, { runId, seq: current.events.length, at: new Date().toISOString(), actor: 'system', type: `case:${outcome.kind}`, summary: outcome.note }],
+    }));
   }
 }
 

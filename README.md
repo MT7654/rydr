@@ -63,7 +63,7 @@ npm run build
 npm start -- --port 3000
 ```
 
-Production uses `.next-production`; development uses `.next`. Run one server per port. No database service is needed: sample records are immutable repository files, and local changes persist under ignored `data/runtime/` visitor namespaces. Tests use isolated scratch storage.
+Local production uses `.next-production`; development uses `.next`; Vercel builds use its standard `.next` directory. Run one server per port. Credential-free judging uses local files under ignored `data/runtime/` visitor namespaces. Hosted deployments can use **Neon Postgres and private Neon object storage** for durable shared state and uploaded bytes. Source fixtures remain immutable repository files. See [Neon and Vercel setup](docs/NEON-VERCEL.md). Tests default to isolated local scratch storage.
 
 ## Agent/evaluator command
 
@@ -178,7 +178,7 @@ npm run judge:verify
 npm run build
 ```
 
-The UI release passed 418 tests with 8 optional external tests skipped. The new evaluator adds five credential-free scenarios; see its generated report for results from your checkout. Historical reports in `docs` are not proof of a new live run.
+The Neon integration passed 424 tests with 15 optional external tests skipped; its seven opt-in real-service tests also passed separately. The new evaluator adds five credential-free scenarios; see its generated report for results from your checkout. Historical reports in `docs` are not proof of a new live run.
 
 | Symptom | Action |
 | --- | --- |
@@ -190,7 +190,7 @@ The UI release passed 418 tests with 8 optional external tests skipped. The new 
 | IDE-injected safe-delete shim blocks build/test cleanup | Run from a standard terminal/environment. Do not remove global protections or recursively delete unrelated paths. |
 | Refund pending / failed / manual adjustment | Inspect the recorded decision and test-ledger state separately; use the permitted reviewer recovery action. |
 
-Storage is designed for a **single local server process**. Public hosting requires durable storage, server-managed secrets and real identity/access control. The role picker previews permissions and is not verified authentication. All financial actions and platform source adapters are simulations; no funds move and no Ryde notifications are sent.
+The file backend is designed for a **single local server process**. The Neon backend persists records in Postgres, serializes mutations with database transactions/advisory locks, and stores uploads in a private bucket. Bounded agent execution is attached to the Vercel request lifetime. Public-host verification remains required; this is not an unlimited durable worker queue. The role picker previews permissions and is not verified authentication. All financial actions and platform source adapters are simulations; no funds move and no Ryde notifications are sent.
 
 ## Submission and documentation
 

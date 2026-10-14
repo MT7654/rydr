@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "namespace": "http-verification-mv8c84ll",
+  "generatedAt": "2026-10-14T16:44:33.253Z",
+  "databaseBranch": "production",
+  "results": [
+    {
+      "name": "production servers use Neon records and private uploads",
+      "status": "passed",
+      "ports": [
+        3015,
+        3016
+      ]
+    },
+    {
+      "name": "cross-instance SYN-001 automatic outcome",
+      "status": "passed",
+      "runId": "run_SYN-001_mv8c8bko",
+      "disposition": "refund",
+      "refundCents": 500,
+      "elapsedMs": 69796,
+      "provider": "fixture (no paid AI calls)"
+    },
+    {
+      "name": "cross-instance SYN-005 automatic outcome",
+      "status": "passed",
+      "runId": "run_SYN-005_mv8c9r3l",
+      "disposition": "uphold",
+      "refundCents": 0,
+      "elapsedMs": 67549,
+      "provider": "fixture (no paid AI calls)"
+    },
+    {
+      "name": "image upload and immutable version survive across processes",
+      "status": "passed",
+      "caseId": "SYN-015",
+      "version": 2,
+      "hash": "8779c203f8b9d9e8d4c95643490785ce19731e881e5cecfc2df95ff4a4fd086d"
+    },
+    {
+      "name": "other visitors cannot read the uploaded image or case mutation",
+      "status": "passed",
+      "imageStatus": 404,
+      "otherCaseVersion": 1
+    }
+  ],
+  "limitations": "Actual Neon production-branch services through two local production app instances. Scripted AI provider; no Vercel deployment or live ADP availability test. Isolated verification namespace, no existing user records changed."
+}

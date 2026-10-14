@@ -5,11 +5,11 @@ import { StructuredEvidenceResponseSchema } from '../domain/contracts';
 import type { DemoRole } from '../domain/demoAccess';
 import { getCase } from './cases';
 import { createEvidenceRequest, ensureReviewTask, updateEvidenceRequest, listEvidenceRequestsForCase } from './reviewTasks';
-import { readJson, writeJsonAtomic, RUNTIME_DIR, withLock } from './store';
+import { readJson, writeJsonAtomic, RUNTIME_DIR, withLock, writeBinary, readBinary } from './store';
 export async function supportingRequests(caseId: string, role: DemoRole) {
   return (await listEvidenceRequestsForCase(caseId)).filter(r => role === 'reviewer' || r.recipient === role);
 }
-type Attachment = { owner: DemoRole; caseId: string; mime: string; bytes: string; hash: string };
+type Attachment = { owner: DemoRole; caseId: string; mime: string; bytes?: string; objectStored?: boolean; hash: string };
 const attachmentPath = (id: string) => path.join(RUNTIME_DIR,'repair-attachments',`${id}.json`);
 export async function submitSupportingRecord(caseId: string, version: number, role: DemoRole, note: string, key: string, structured?: unknown, file?: File) {
   if (role === 'reviewer') throw new Error('Choose a party role to submit a supporting record.');
@@ -29,7 +29,8 @@ export async function submitSupportingRecord(caseId: string, version: number, ro
       const pending = await supportingRequests(caseId,role);
       if (pending.filter(r => r.responseEvidenceIds.some(id => id.startsWith('attachment-'))).length >= 4) throw new Error('At most four supporting documents per case and role.');
       attachmentId = `attachment-${randomUUID()}`;
-      await writeJsonAtomic(attachmentPath(attachmentId),{ owner:role, caseId, mime:'application/pdf', bytes:bytes.toString('base64'), hash:createHash('sha256').update(bytes).digest('hex') });
+      await writeBinary(path.join(RUNTIME_DIR, 'repair-attachments', attachmentId + '.pdf'), bytes, 'application/pdf');
+      await writeJsonAtomic(attachmentPath(attachmentId),{ owner:role, caseId, mime:'application/pdf', objectStored:true, hash:createHash('sha256').update(bytes).digest('hex') });
     }
     const { task } = await ensureReviewTask({ caseId, caseVersion:version, runId:null, kind:'party_request', submittedBy:role,
       reasonCodes:['evidence_repair_submission'], reasonSummary:'Party supplied a supporting record for evidence verification.', openQuestions:['Check relevance, source and any proposed correction before changing a finding.'] });
@@ -42,7 +43,7 @@ export async function readSupportingAttachment(id: string, caseId: string, role:
   if (!/^attachment-[a-f0-9-]{36}$/.test(id)) throw new Error('Invalid attachment.');
   const item = await readJson<Attachment>(attachmentPath(id));
   if (!item || item.caseId !== caseId || (role !== 'reviewer' && item.owner !== role)) throw new Error('This attachment is unavailable to your role.');
-  const bytes = Buffer.from(item.bytes,'base64');
+  const bytes = item.objectStored ? await readBinary(path.join(RUNTIME_DIR, 'repair-attachments', id + '.pdf')) : Buffer.from(item.bytes ?? '', 'base64');
   if (createHash('sha256').update(bytes).digest('hex') !== item.hash) throw new Error('Attachment differs from the stored hash.');
   return bytes;
 }

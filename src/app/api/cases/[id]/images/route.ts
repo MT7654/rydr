@@ -5,6 +5,7 @@ import { registerAdpImageSource } from '@/repositories/visionSources';
 import { getCase } from '@/repositories/cases';
 import { mutationRole } from '@/lib/journeyApi';
 export const runtime = 'nodejs';
+export const maxDuration = 300;
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const version = Number(new URL(request.url).searchParams.get('version'));

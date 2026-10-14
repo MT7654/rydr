@@ -224,6 +224,11 @@ export async function loadCasePacket(
 
 /** Loads every case packet at its current version. */
 export async function loadAllCasePackets(): Promise<CasePacket[]> {
+  const { currentStorageSession, withStorageSession } = await import('@/repositories/store');
+  return withStorageSession(await currentStorageSession(), loadAllCasePacketsUncached);
+}
+
+async function loadAllCasePacketsUncached(): Promise<CasePacket[]> {
   const { getAllCases } = await import('@/repositories/cases');
   const cases = await getAllCases();
   const packets = await Promise.all(cases.map((record) => loadCasePacket(record.id)));

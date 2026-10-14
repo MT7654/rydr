@@ -52,3 +52,12 @@ Read-only source fixtures live under `fixtures/` and `reference/`. Never change 
 Before changing code, inspect the current implementation and related tests. Preserve live integrations and existing safety gates. Run appropriate tests, typecheck/lint/build after implementation changes. Documentation-only changes need link/command verification. Report commands run, observed outputs, skipped checks and concrete blockers; do not claim a live or browser check that was not performed.
 
 No new agents, paid calls, image uploads, external messages, public deployment, destructive cleanup or submission-form actions are implied by a request to evaluate this repository. Use explicit user authorization for those activities.
+
+
+## Optional Neon backend
+
+Credential-free evaluation stays on file storage. Tests default to file mode even when database credentials exist; never opt into cloud tests without authorization. For authorized hosted setup, read docs/NEON-VERCEL.md and the installed Neon skills. Use pooled DATABASE_URL for the Node.js pg pool and DATABASE_URL_UNPOOLED for versioned migrations. Keep all database and S3 credentials server-side. Do not expose the private bucket or turn role-preview cookies into claimed verified identity.
+
+Run npm run db:migrate explicitly against the intended branch before serving the app. Schema changes belong in migrations/; do not edit existing migration history. Neon mutations use withLock transactions and shared nested context; workers must start only after commit. Publish terminal run state only after settlement or reviewer task persistence.
+
+With explicit cloud-test authorization, npm run test:neon verifies actual services in an isolated namespace; node scripts/neon-http-smoke.mjs verifies two local production processes against the actual services using fixture AI. These checks create synthetic records and objects and do not prove live ADP availability or Vercel hosting. Never print env values, signed credentials, or secret connection URLs in reports.

@@ -1,3 +1,4 @@
+export const maxDuration = 300;
 import { NextResponse } from 'next/server';
 import { beginRun } from '@/agents/orchestrator';
 import { collectForCase } from '@/agents/collector';

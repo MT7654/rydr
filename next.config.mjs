@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  outputFileTracingIncludes: { '/*': ['./fixtures/**/*', './reference/**/*', './public/damage-demo/**/*'] },
   serverExternalPackages: ['@contentauth/c2pa-node', 'exif-reader'],
   // Keep production artifacts separate from WorkBuddy's running dev servers.
   distDir: process.env.RYDR_BUILD_DIR ?? '.next',

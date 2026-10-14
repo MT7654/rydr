@@ -1,3 +1,4 @@
+export const maxDuration = 300;
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { mutationRole } from '@/lib/journeyApi';

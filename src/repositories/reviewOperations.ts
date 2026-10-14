@@ -32,8 +32,9 @@ import { withLock } from './store';
  * directly without holding the case operation lock, which is a single edge in
  * one direction and cannot form a cycle.
  *
- * This is an in-process lock for one local demo process. It is not a distributed
- * lock and is not presented as one.
+ * File mode uses an in-process lock for one local process. Neon mode wraps
+ * the whole visitor operation in a database transaction/advisory lock, with
+ * nested stores sharing that transaction so concurrent instances cannot race.
  */
 
 export function withCaseOperation<T>(caseId: string, task: () => Promise<T>): Promise<T> {

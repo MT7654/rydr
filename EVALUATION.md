@@ -148,3 +148,8 @@ npm run build
 Eight external integration tests are opt-in and can remain skipped for credential-free evaluation. Fixture assertions and synthetic-label agreement are not production fairness/accuracy measurements. Risk signals are not fraud determinations. Content credentials, EXIF and duplicate checks cannot certify arbitrary photos or causation. Financial posting/recovery and platform adapters are simulations.
 
 Code-level tests cover both-party appeals, role-filtered source access, immutable snapshots, evidence guards, idempotent settlements and driver credit independent of recovery. Browser checks are separate: report which were actually performed. Keep a fresh sample session for a submission walkthrough and retain screenshots/exports with execution mode visible.
+
+
+## Optional hosted persistence verification
+
+The no-secret path above still uses isolated file storage. A credentialed deployment can use Neon Postgres and a private assets bucket; see [setup](docs/NEON-VERCEL.md) and [observed verification](docs/NEON-VERIFICATION.md). With explicit authorization, npm run test:neon tests the real services in synthetic namespaces. node scripts/neon-http-smoke.mjs builds on an existing production build and starts two local processes to test both automatic dispute outcomes, ledger receipts, uploads, cross-instance idempotency and visitor isolation. It uses fixture agents and does not certify live ADP availability or a Vercel deployment.

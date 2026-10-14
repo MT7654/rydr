@@ -42,3 +42,4 @@ docs/vision-key-check.json
 
 # Locally generated judge verification reports
 data/judge-evaluation/
+.neon

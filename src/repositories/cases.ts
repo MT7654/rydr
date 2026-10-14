@@ -7,7 +7,7 @@ import {
   type PolicyPack,
 } from '../domain/contracts';
 import { buildDisp002Case } from '../domain/sourceAdapter';
-import { listJsonFiles, readJson, RUNTIME_DIR, withLock, writeJsonAtomic, scopeRuntimePath } from './store';
+import { listJsonFiles, readJson, RUNTIME_DIR, withLock, writeJsonAtomic, listRuntimeEntries } from './store';
 
 /**
  * Case repository.
@@ -87,9 +87,9 @@ async function runtimeCaseVersions(caseId: string): Promise<CaseRecord[]> {
 async function listRuntimeCaseIds(): Promise<string[]> {
   const ids = new Set<string>();
   try {
-    const entries = await fs.readdir(await scopeRuntimePath(RUNTIME_CASES_DIR), { withFileTypes: true });
+    const entries = await listRuntimeEntries(RUNTIME_CASES_DIR);
     for (const entry of entries) {
-      if (entry.isDirectory()) ids.add(entry.name);
+      if (entry.directory) ids.add(entry.name);
       else if (entry.name.endsWith('.json')) ids.add(entry.name.replace(/\.json$/, ''));
     }
   } catch (error) {
