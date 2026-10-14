@@ -11,6 +11,7 @@ import { checkpointPolicyPreview } from '@/domain/pickupPolicy';
 import { navigatorReady } from '@/agents/navigator';
 import { PickupJourney } from '@/components/PickupJourney';
 import { NavigatorPanel } from '@/components/NavigatorPanel';
+import { CitationDrawer } from '@/components/CitationDrawer';
 import { paymentsForCase } from '@/lib/casePayments';
 import { EmptyState } from '@/components/States';
 import { PartyWorkspace } from '@/components/workspace/PartyWorkspace';
@@ -70,7 +71,7 @@ export default async function RidesPage({
   const packets = await loadAllCasePackets();
   const options: CaseOption[] = packets.map((packet) => ({
     id: packet.caseRecord.id,
-    label: packet.caseRecord.id+' · '+(packet.caseRecord.category === 'damage' ? 'Damage charge' : packet.caseRecord.category === 'no_show_charge' ? 'No-show charge' : 'Route charge'),
+    label: packet.caseRecord.id+' · '+(packet.caseRecord.category === 'damage' ? 'Damage charge' : packet.caseRecord.category === 'no_show_charge' ? 'No-show charge' : packet.caseRecord.category === 'fare_dispute' ? 'Fare dispute' : 'Route charge'),
     status: CASE_STATUS_LABELS[packet.status],
     disputedCents: packet.caseRecord.disputedCents,
   }));
@@ -120,30 +121,9 @@ async function PickupStage({ role }: { role: 'rider' | 'driver' }) {
         </div>
       </header>
 
-      <ol className="workspace-progress" aria-label="Case progress">
-        <li className="workspace-progress__step is-current" aria-current="step">
-          <span className="workspace-progress__marker" aria-hidden="true">1</span>
-          <span className="workspace-progress__label">Pickup</span>
-          <span className="small muted workspace-progress__detail">In progress</span>
-        </li>
-        <li className="workspace-progress__step is-upcoming">
-          <span className="workspace-progress__marker" aria-hidden="true">2</span>
-          <span className="workspace-progress__label">Ride</span>
-          <span className="small muted workspace-progress__detail">Not yet reached</span>
-        </li>
-        <li className="workspace-progress__step is-skipped">
-          <span className="workspace-progress__marker" aria-hidden="true">–</span>
-          <span className="workspace-progress__label">Dispute</span>
-          <span className="small muted workspace-progress__detail">Not required if pickup is confirmed</span>
-        </li>
-      </ol>
-
-      <div className="workspace-grid">
-        <div className="workspace-canvas">
-          <PickupJourney checkpoint={checkpoint} role={role} preview={preview} />
-        </div>
-        <NavigatorPanel target="pickup" ready={navigatorReady()} />
-      </div>
+      <section className="ride-introduction"><div><h2>Agree on the pickup, before the ride</h2><p>Confirm the meeting point and access instructions together.</p><button className="btn btn--ghost" type="button" data-inspect="navigator">Ask about this pickup</button></div><img className="pickup-concept" src="/illustrations/pickup-concept.webp" width={960} height={640} alt=""/></section>
+      <PickupJourney checkpoint={checkpoint} role={role} preview={preview}/>
+      <CitationDrawer caseId={template.id} panels={[{id:'navigator',title:'Pickup Navigator',content:<NavigatorPanel target="pickup" ready={navigatorReady()}/>}]} />
 
       <p className="small muted">
         <Link href="/rides">← Back to your rides</Link> · <Link href="/policies">Help &amp; policies</Link>

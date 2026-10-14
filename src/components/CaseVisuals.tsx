@@ -38,7 +38,9 @@ export function CaseVisual({ caseRecord, evaluation, pack }: Props) {
   if (caseRecord.category === 'fare_dispute') {
     const fare = evaluation.fare;
     if (!fare) return <div className="notice">Quote and surge records are missing. No fare comparison is inferred.</div>;
-    return <figure className="card" aria-label="Fare and surge comparison"><p className="eyebrow">Same ride · changed price</p><h2>Where did the difference come from?</h2><div className="grid grid--2"><div><p>Upfront quote · {fare.quoteMultiplier}×</p><strong className="amount">S${(fare.quotedCents / 100).toFixed(2)}</strong></div><div><p>Charged fare · {fare.startMultiplier}×</p><strong className="amount">S${(fare.chargedCents / 100).toFixed(2)}</strong></div></div><p><strong>Surge difference: S${((fare.differentialCents ?? 0) / 100).toFixed(2)}</strong> · fixed fee S${(fare.fixedFeeCents / 100).toFixed(2)} stays outside surge.</p><p className="small">Notification: {fare.notified === null ? 'unknown' : fare.notified ? 'sent' : 'not sent in the supplied pricing log'}. Source totals {fare.reconciled ? 'reconcile' : 'need verification'}. This comparison is evidence, not a payment receipt.</p></figure>;
+    const source=caseRecord.evidence.find(e=>e.kind==='fare');
+    const parts=source&&fare.reconciled&&fare.differentialCents!==null&&fare.differentialCents>=0?[{label:'Fixed fee',cents:fare.fixedFeeCents},{label:'Quoted surgeable fare',cents:fare.quotedCents-fare.fixedFeeCents},{label:'Surge increase',cents:fare.differentialCents??0}]:[];
+    return <figure className="card" aria-label="Fare and surge comparison"><div className="fare-exhibit-values"><div><p>Upfront quote · {fare.quoteMultiplier}×</p><strong className="amount">S${(fare.quotedCents / 100).toFixed(2)}</strong></div><div><p>Charged fare · {fare.startMultiplier}×</p><strong className="amount">S${(fare.chargedCents / 100).toFixed(2)}</strong></div></div>{parts.length?<div className="fare-bridge" aria-label="Components of charged fare">{parts.map(p=><span key={p.label} style={{flex:p.cents||1}}>{p.label}: S${(p.cents/100).toFixed(2)}</span>)}</div>:null}<p><strong>Surge difference: {fare.differentialCents===null?'Unknown':'S$'+(fare.differentialCents/100).toFixed(2)}</strong></p><p className="case-visual__note">Notification: {fare.notified === null ? 'Unknown' : fare.notified ? 'Recorded' : 'Not sent in the supplied pricing log'}. Source totals {fare.reconciled ? 'reconcile' : 'need verification'}. This comparison is evidence, not a payment receipt.</p>{source?<Cite kind="evidence" id={source.id}>Inspect pricing record</Cite>:null}</figure>;
   }
   if (caseRecord.category === 'damage') return <div className="notice">Compare the submitted views below, request a verified before/after record, and refer liability to a reviewer. No route geometry applies to this damage case.</div>;
   const thresholds = pack.source !== 'supplied_sample' ? pack.thresholds : null;
@@ -565,4 +567,3 @@ function VisualHead({ label, note }: { label: string; note: string }) {
     </figcaption>
   );
 }
-

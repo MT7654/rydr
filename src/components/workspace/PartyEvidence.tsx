@@ -101,6 +101,7 @@ export function PartyEvidence({
                 <li key={request.id}>
                   <span className={`badge badge--${state.tone}`}>{state.label}</span>
                   <span>{request.question}</span>
+                  {request.responseNote?<p className="original-text"><strong>Your recorded response:</strong> {request.responseNote}</p>:null}
                   {request.status === 'submitted' ? (
                     <span className="small muted">
                       {request.structuredResponse

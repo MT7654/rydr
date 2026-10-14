@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { DraftForm } from './DraftForm';
+import { RefundAmountField } from './RefundAmountField';
 import { EvidenceAcceptanceButton } from '@/components/EvidenceAcceptanceButton';
 import { displayText } from '@/domain/displayText';
 import { DEMO_REVIEWER_NAME, type ReviewTask, type StructuredEvidenceResponse } from '@/domain/contracts';
@@ -186,7 +187,7 @@ export function ReviewTaskWorkbench({
       </details>
 
       {judge ? (
-        <section className="card" id="review-judge">
+        <details className="card" id="review-judge"><summary>Full judge synthesis</summary>
           <div className="card__title">
             <h2>Judge synthesis</h2>
             <span className="badge badge--neutral">{judge.disposition.replace(/_/g, ' ')}</span>
@@ -196,7 +197,7 @@ export function ReviewTaskWorkbench({
             Cited policy: <CiteList kind="policy" ids={judge.policyIds} /> · evidence{' '}
             {judge.materialEvidenceIds.length} item(s)
           </p>
-        </section>
+        </details>
       ) : null}
 
       <details className="card">
@@ -309,7 +310,7 @@ export function ReviewTaskWorkbench({
       </section>
 
       {/* Decision history, settlement recovery and versions */}
-      <section className="card" id="review-history">
+      <details className="card" id="review-history"><summary>Decision and version history</summary>
         <div className="card__title">
           <h2>Decision history</h2>
         </div>
@@ -388,7 +389,7 @@ export function ReviewTaskWorkbench({
             );
           })}
         </ul>
-      </section>
+      </details>
 
       {!reviewComplete ? (
         <>
@@ -448,7 +449,7 @@ export function ReviewTaskWorkbench({
             </DraftForm>
           </details>
 
-          <section className="card">
+          <section className="card task-ownership">
             <div className="card__title">
               <h2>Take ownership</h2>
             </div>
@@ -502,7 +503,7 @@ export function ReviewTaskWorkbench({
             <div className="card__title">
               <h2>{isAppeal ? 'Resolve the appeal' : 'Record a decision'}</h2>
             </div>
-            <DraftForm draftId={task.id+':decision'} action={decideTask} className="stack" style={{ gap: '0.5rem' }}>
+            <DraftForm draftId={task.id+':decision'} reviewBeforeSubmit={{maxRefundCents:caseRecord.disputedCents}} action={decideTask} className="stack" style={{ gap: '0.5rem' }}>
               <input type="hidden" name="taskId" value={task.id} />
               <input type="hidden" name="revision" value={task.revision} />
               <input type="hidden" name="recommendedDisposition" value={recommendedDisposition ?? ''} />
@@ -524,23 +525,9 @@ export function ReviewTaskWorkbench({
                   <option value="uphold">Uphold the charge</option>
                 </select>
               </label>
+              <RefundAmountField initial={recommendation?.recommendedRefundCents??null} maxCents={caseRecord.disputedCents} disposition={recommendedDisposition}/>
               <label className="field">
-                <span className="field__label">Refund amount (SGD)</span>
-                <input
-                  type="text"
-                  name="targetRefund"
-                  defaultValue={
-                    recommendation?.recommendedRefundCents == null
-                      ? ''
-                      : (recommendation.recommendedRefundCents / 100).toFixed(2)
-                  }
-                  className="input"
-                  placeholder="e.g. 5.00"
-                  inputMode="decimal"
-                />
-              </label>
-              <label className="field">
-                <span className="field__label">Reason (required)</span>
+                <span className="field__label">Why this outcome is supported (required)</span>
                 <textarea name="reason" className="input" rows={3} required />
               </label>
               {!isAppeal && recommendedDisposition && recommendedDisposition !== 'human_review' ? (
@@ -563,7 +550,7 @@ export function ReviewTaskWorkbench({
                   </p>
                   <div className="row">
                     <button disabled={hasNewerCaseVersion} type="submit" name="appealOutcome" value="accept" className="btn btn--primary">
-                      Accept appeal and record outcome
+                      Review acceptance and revised outcome
                     </button>
                     <button
                       type="submit"
@@ -572,13 +559,13 @@ export function ReviewTaskWorkbench({
                       formNoValidate
                       className="btn"
                     >
-                      Uphold original decision
+                      Review rejection of appeal
                     </button>
                   </div>
                 </>
               ) : (
                 <button disabled={hasNewerCaseVersion} type="submit" className="btn btn--primary btn--sm">
-                  Record decision and settle
+                  Review decision draft
                 </button>
               )}
             </DraftForm>
@@ -630,5 +617,3 @@ export function ReviewTaskWorkbench({
     </div>
   );
 }
-
-

@@ -24,7 +24,7 @@ export function PartyBrief({
   decided?:boolean;
 }) {
   const material = findings.filter((finding) => finding.material);
-  const supported = material.filter(f=>f.kind!=='claim').slice(0,3);
+  const supported = material.filter(f=>f.kind==='observation'||f.kind==='computed').slice(0,3);
   const unresolved = issues.slice(0, 3);
   const ownStatement = role === 'driver' ? caseRecord.driverStatement : caseRecord.riderStatement;
   const otherStatement = role === 'driver' ? caseRecord.riderStatement : caseRecord.driverStatement;
@@ -108,4 +108,3 @@ export function PartyBrief({
     </section>
   );
 }
-

@@ -376,6 +376,7 @@ describe('action registry', () => {
 });
 
 describe('stage progress', () => {
+  it('does not claim evidence is unnecessary before assessment',()=>{const stages=stageProgress({status:'open',hasDecision:false,hasAppeal:false,hasOpenEvidenceRequest:false});expect(stages.find(s=>s.stage==='Evidence')).toMatchObject({state:'upcoming',detail:'Not requested yet'});});
   it('marks evidence as not required when no request is open', () => {
     const progress = stageProgress({
       status: 'ready_for_decision',
@@ -385,7 +386,7 @@ describe('stage progress', () => {
     });
     const evidence = progress.find((entry) => entry.stage === 'Evidence');
     expect(evidence?.state).toBe('skipped');
-    expect(evidence?.detail).toBe('Not required');
+    expect(evidence?.detail).toBe('Not needed for this decision');
   });
 
   it('shows appeal review on the decision stage when an appeal is open', () => {
@@ -399,5 +400,3 @@ describe('stage progress', () => {
     expect(decision?.detail).toBe('Appeal review open');
   });
 });
-
-

@@ -91,7 +91,7 @@ export function PartyOutcome({
             </p>
           ) : (
             <>
-              <details className="money-breakdown" open>
+              <details className="money-breakdown">
                 <summary>Charge breakdown</summary>
                 <div className="outcome-amounts">
                   <div className="outcome-amounts__row">
@@ -123,13 +123,7 @@ export function PartyOutcome({
                 </div>
               </details>
 
-              <p className="outcome-highlight">
-                <span>{role==='reviewer'?'Total returned to the rider':isDriver ? 'Total returned to the rider' : 'Your total refund'}</span>
-                <strong>{formatSgd(totalRefundedCents)}</strong>
-                <span className="small">
-                  {formatSgd(retainedCents)} of the original charge remains · simulated payment
-                </span>
-              </p>
+              <div className="resolution-receipt"><p className="eyebrow">Recorded decision</p><strong className="receipt-value">{formatSgd(effectiveDecision.targetRefundCents??0)}</strong><p>{effectiveDecision.disposition==='uphold'?'Charge upheld':'Refund approved'} · {effectiveDecision.source==='ai'?'Automated':'Reviewer'} decision</p><div className="receipt-posting"><span>Decision recorded</span><span aria-hidden="true">→</span><strong>{settlement?.status==='posted'?'Posted to test ledger':settlement?.status==='failed'?'Posting failed':settlement?.status==='manual_adjustment_required'?'Manual adjustment required':'Posting pending'}</strong></div><p className="small muted">{formatSgd(totalRefundedCents)} total refunded in the simulated ledger · {formatSgd(retainedCents)} retained</p></div>
             </>
           )}
 
@@ -259,4 +253,3 @@ export function PartyOutcome({
     </section>
   );
 }
-

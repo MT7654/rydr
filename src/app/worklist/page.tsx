@@ -6,7 +6,7 @@ import { CASE_STATUS_LABELS, caseStatusTone } from '@/domain/caseStatus';
 import { SERVICE_TARGET_LABEL, deadlineLabel, isOverdue } from '@/domain/routing';
 import { migrateLegacyReviewRequests } from '@/repositories/reviewTasks';
 import { EmptyState } from '@/components/States';
-import { SyntheticNotice } from '@/components/Badges';
+
 import { reviewTaskLabel } from '@/domain/navigation';
 import {
   WORKLIST_FILTERS,
@@ -34,10 +34,12 @@ const OWNER_LABELS: Record<string, string> = {
 export default async function WorklistPage({
   searchParams,
 }: {
-  searchParams: Promise<{ filter?: string }>;
+  searchParams: Promise<{ filter?: string; q?: string }>;
 }) {
   await requireReviewerRole();
-  const { filter: filterParam } = await searchParams;
+  const { filter: filterParam, q: query = '' } = await searchParams;
+  const q=query.trim().slice(0,120);
+  const search=q.toLocaleLowerCase();
   const filter = parseWorklistFilter(filterParam);
 
   // Bring any legacy pending request into the queue so nothing stays stranded.
@@ -48,7 +50,7 @@ export default async function WorklistPage({
   const summaries = packets.map(summarizeCase);
   const counts = worklistCounts(summaries);
   const ordered = [...summaries].sort((a, b) => compareWorklistSummaries(a, b, now));
-  const visible = ordered.filter((summary) => matchesWorklistFilter(summary, filter));
+  const visible = ordered.filter((summary) => matchesWorklistFilter(summary, filter) && (!search || (summary.caseId+' '+summary.issueLabel+' '+summary.stageLabel).toLocaleLowerCase().includes(search)));
 
   const activeFilter = WORKLIST_FILTERS.find((entry) => entry.key === filter)!;
   const safetyCount = ordered.filter((summary) => summary.lane === 'safety').length;
@@ -58,42 +60,16 @@ export default async function WorklistPage({
 
   return (
     <main className="container stack worklist">
-      <div className="card">
-        <div className="card__title">
-          <h1>Worklist</h1>
-          <span className="badge badge--review">Reviewer workspace · sample identity</span>
-        </div>
-        <p className="small muted" style={{ margin: 0 }}>
-          Every case in this session, including ones with no assessment yet. Open a case to assess
-          it, resolve a gap and record a decision. Clear cases settle without a reviewer.
-        </p>
-        <p className="small muted" style={{ margin: '0.5rem 0 0' }}>
-          Ordered by lane, then by how far past its target a case has run. Deadlines are{' '}
-          <strong>{SERVICE_TARGET_LABEL}</strong>. Priority changes who looks next and by when; it
-          never changes the refund amount.
-        </p>
-      </div>
-
-      <div className="row" aria-label="Worklist summary">
-        <span className="badge badge--neutral">{summaries.length} cases</span>
-        <span className={`badge ${safetyCount > 0 ? 'badge--danger' : 'badge--neutral'}`}>
-          {safetyCount} in the safety lane
-        </span>
-        <span className={`badge ${overdueCount > 0 ? 'badge--review' : 'badge--neutral'}`}>
-          {overdueCount} past target
-        </span>
-        <Link href="/intake" className="btn btn--ghost btn--sm">
-          Add case
-        </Link>
-      </div>
+      <header className="desk-worklist-head"><div><p className="eyebrow">Reviewer workspace</p><h1>Worklist</h1><p className="muted">Choose a case to assess or resolve.</p></div><Link href="/intake" className="btn btn--ghost">Add case</Link></header>
+      <div className="worklist-tools"><form method="get" action="/worklist" className="worklist-search"><input type="hidden" name="filter" value={filter}/><label htmlFor="worklist-search" className="sr-only">Search cases</label><input id="worklist-search" name="q" className="input" defaultValue={q} placeholder="Search case or issue" maxLength={120}/><button className="btn btn--ghost" type="submit">Search</button></form><span className="small muted">{summaries.length} cases{overdueCount?' · '+overdueCount+' past target':''}{safetyCount?' · '+safetyCount+' safety priority':''}</span><details className="worklist-method"><summary>Routing and sample data</summary><p>Sample identities. Ordered by lane and target age. {SERVICE_TARGET_LABEL}. Queue priority never changes an outcome or refund amount.</p></details></div>
 
       <nav className="filters" aria-label="Filter cases">
         {WORKLIST_FILTERS.map((entry) => (
           <Link
             key={entry.key}
-            href={entry.key === 'all' ? '/worklist' : `/worklist?filter=${entry.key}`}
+            href={'/worklist?filter='+entry.key+(q?'&q='+encodeURIComponent(q):'')}
             className="filter"
-            aria-current={filter === entry.key}
+            aria-current={filter === entry.key?'page':undefined}
           >
             {entry.label} <span className="small muted">{counts[entry.key as WorklistFilter]}</span>
           </Link>
@@ -119,67 +95,18 @@ export default async function WorklistPage({
         <div className="card worklist__scroll" style={{ padding: 0 }}>
           <table className="queue-table" tabIndex={0}>
             <caption className="sr-only">Rydr worklist — one row per case</caption>
-            <thead>
-              <tr>
-                <th scope="col">Case</th>
-                <th scope="col">Issue</th>
-                <th scope="col">Disputed</th>
-                <th scope="col">Status</th>
-                <th scope="col">Next owner</th>
-                <th scope="col">Active task</th>
-                <th scope="col">Target</th>
-                <th scope="col">Provenance</th>
-                <th scope="col" />
-              </tr>
-            </thead>
+            <thead><tr><th scope="col">Case</th><th scope="col">Next step</th><th scope="col">Amount</th><th scope="col">Owner and target</th><th scope="col"><span className="sr-only">Open</span></th></tr></thead>
             <tbody>
               {visible.map((summary) => {
                 const overdue = summary.dueAt !== null && isOverdue(summary.dueAt, now);
                 const href = `/cases/${summary.caseId}${summary.selectedTaskId ? `?task=${summary.selectedTaskId}` : ''}`;
                 return (
                   <tr key={summary.caseId}>
-                    <td>
-                      <Link href={href} className="mono">
-                        {summary.caseId}
-                      </Link>
-                      <div className="small muted">
-                        v{summary.caseVersion}
-                        {summary.openTaskCount > 1 ? ` · ${summary.openTaskCount} open tasks` : ''}
-                      </div>
-                    </td>
-                    <td>{summary.issueLabel}</td>
-                    <td className="amount">{formatSgd(summary.disputedCents)}</td>
-                    <td>
-                      <span className={`badge badge--${caseStatusTone(summary.status)}`}>
-                        {CASE_STATUS_LABELS[summary.status]}
-                      </span>
-                      <div className="small muted">{summary.stageLabel}</div>
-                    </td>
-                    <td>{summary.nextActor ? OWNER_LABELS[summary.nextActor] : '—'}</td>
-                    <td className="queue-table__reason">
-                      {summary.openTaskKinds.length === 0
-                        ? summary.needsAssessment
-                          ? 'No assessment yet'
-                          : 'No open task'
-                        : summary.openTaskKinds.map(reviewTaskLabel).join(', ')}
-                    </td>
-                    <td>
-                      {summary.dueAt ? (
-                        <span className={overdue ? 'queue-overdue' : undefined}>
-                          {deadlineLabel(summary.dueAt, now)}
-                        </span>
-                      ) : (
-                        '—'
-                      )}
-                    </td>
-                    <td>
-                      <SyntheticNotice provenance={summary.provenance} />
-                    </td>
-                    <td>
-                      <Link href={href} className="btn btn--primary btn--sm">
-                        {summary.primaryActionLabel}
-                      </Link>
-                    </td>
+                    <td data-label="Case"><Link href={href} className="case-identifier">{summary.caseId}</Link><strong className="worklist-issue">{summary.issueLabel}</strong><span className="small muted">v{summary.caseVersion} · {summary.provenance==='supplied_sample'?'Supplied sample':'Synthetic sample'}{summary.openTaskCount>1?' · '+summary.openTaskCount+' tasks':''}</span></td>
+                    <td data-label="Next step"><span className={`badge badge--${caseStatusTone(summary.status)}`}>{CASE_STATUS_LABELS[summary.status]}</span><p className="small muted">{summary.openTaskKinds.length?summary.openTaskKinds.map(reviewTaskLabel).join(', '):summary.stageLabel}</p></td>
+                    <td data-label="Disputed" className="amount">{formatSgd(summary.disputedCents)}</td>
+                    <td data-label="Owner / target"><strong>{summary.nextActor?OWNER_LABELS[summary.nextActor]:'No action needed'}</strong><p className={overdue?'queue-overdue small':'small muted'}>{summary.dueAt?deadlineLabel(summary.dueAt,now):'No target yet'}</p></td>
+                    <td><Link href={href} className="btn btn--ghost btn--sm">Open case <span className="sr-only">{summary.caseId}</span></Link></td>
                   </tr>
                 );
               })}
@@ -188,7 +115,7 @@ export default async function WorklistPage({
         </div>
       )}
 
-      {summaries.length > 0 && visible.length > 0 && filter !== 'all' ? (
+      {summaries.length > 0 && (filter !== 'all'||q) ? (
         <p className="small muted">
           <Link href="/worklist">Clear filters</Link> to see every case.
         </p>

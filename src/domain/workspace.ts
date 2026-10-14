@@ -171,7 +171,7 @@ export function stageProgress(input: {
   return order.map((stage, index) => {
     if (stage === 'Evidence' && !hasOpenEvidenceRequest && index !== currentIndex) {
       // Evidence is genuinely not required for many cases; say so.
-      return { stage, state: 'skipped' as StageState, detail: 'Not required' };
+      return currentIndex < 2 ? { stage, state: 'upcoming' as StageState, detail: 'Not requested yet' } : { stage, state: 'skipped' as StageState, detail: 'Not needed for this decision' };
     }
     if (stage === 'Assessment' && index !== currentIndex && currentIndex > 1) {
       return { stage, state: 'done' as StageState, detail: 'Assessment recorded' };

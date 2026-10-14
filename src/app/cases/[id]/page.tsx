@@ -1,7 +1,7 @@
 import { paymentsForCase } from '@/lib/casePayments';
 import { notFound } from 'next/navigation';
 import { listRuns, selectRunForCase } from '@/repositories/runs';
-import { listCaseVersions } from '@/repositories/cases';
+import { listCaseVersions, getAllCases, getPolicyPack } from '@/repositories/cases';
 import { CaseDetailView } from '@/components/CaseDetailView';
 import { ReviewerWorkspace } from '@/components/workspace/ReviewerWorkspace';
 import { ReviewTaskWorkbench } from '@/components/workspace/ReviewTaskWorkbench';
@@ -69,10 +69,14 @@ export default async function CasePage({
 
   const selectedTask = packet.tasks.find((task) => task.id === data.view.selectedTaskId) ?? null;
   const caseVersions = await listCaseVersions(id);
+  const embeddedPolicy=evaluation.findings.some(f=>f.id==='F-POLICY-CONFLICT')?await getPolicyPack('supplied-sample-policy'):null;
+  const embeddedThresholdSeconds=embeddedPolicy?.source==='supplied_sample'?embeddedPolicy.statedThresholds.noShowThresholdSeconds:null;
 
   return (
     <ReviewerWorkspace
       data={data}
+      embeddedThresholdSeconds={embeddedThresholdSeconds}
+      caseOptions={(await getAllCases()).map(c=>({id:c.id,label:c.category==='no_show_charge'?'No-show charge':c.category==='fare_dispute'?'Fare dispute':c.category==='damage'?'Damage charge':'Route deviation',amount:formatSgd(c.disputedCents),version:c.version}))}
       notice={notice}
       error={error}
       taskOptions={data.otherTasks.map((task) => ({

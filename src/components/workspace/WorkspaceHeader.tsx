@@ -40,13 +40,13 @@ export function WorkspaceHeader({
   return (
     <header className="workspace-header" id="workspace-header">
       <div className="workspace-header__main">
-        <p className="eyebrow">
+        <p className="eyebrow"><Link href={role==='reviewer'?'/worklist':'/rides'}>{role==='reviewer'?'Worklist':'My rides'}</Link> / {caseRecord.id} ·
           {role === 'reviewer' ? 'Reviewer workspace' : role === 'driver' ? 'Driver workspace' : 'Rider workspace'}
           {view.historical ? ` · Recorded assessment · case v${view.displayedCaseVersion}` : ''}
         </p>
         <h1 className="workspace-header__title">{issue}</h1>
         <p className="workspace-header__meta">
-          <span className="workspace-header__amount">{formatSgd(caseRecord.disputedCents)} disputed</span>
+          <span>Disputed charge</span>
           <span aria-hidden="true"> · </span>
           <span>Case v{view.displayedCaseVersion}</span>
           <span aria-hidden="true"> · </span>
@@ -61,7 +61,7 @@ export function WorkspaceHeader({
         </p>
       </div>
       <div className="workspace-header__aside">
-        <span className={`badge badge--${caseStatusTone(view.businessStatus)}`}>
+        <strong className="desk-disputed-amount">{formatSgd(caseRecord.disputedCents)}</strong><span className={`badge badge--${caseStatusTone(view.businessStatus)}`}>
           {CASE_STATUS_LABELS[view.businessStatus]}
         </span>
         <Link

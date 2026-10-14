@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect,useState } from 'react';
 import { TEAM_TOOL_LINKS, primaryLinks, utilityLinks } from '@/domain/navigation';
 import type { DemoRole } from '@/domain/demoAccess';
 
@@ -18,11 +19,14 @@ function isActive(pathname: string, href: string): boolean {
 
 export function ProductNav({ role }: { role: DemoRole | null }) {
   const pathname = usePathname();
+  const [expanded,setExpanded]=useState(false);
+  useEffect(()=>{const value=localStorage.getItem('rydr-rail:'+role)==='expanded';setExpanded(value);document.body.classList.toggle('rail-expanded',value);return()=>document.body.classList.remove('rail-expanded');},[role]);
+  function toggle(){const next=!expanded;setExpanded(next);document.body.classList.toggle('rail-expanded',next);localStorage.setItem('rydr-rail:'+role,next?'expanded':'compact');}
   const primary = primaryLinks(role);
   const utilities = utilityLinks(role);
 
   return (
-    <nav className="header-meta" aria-label="Primary">
+    <nav className="header-meta" aria-label="Primary">{role?<button className="rail-toggle" type="button" onClick={toggle} aria-expanded={expanded}>{expanded?'Compact menu':'Expand menu'}</button>:null}
       {primary.map((link) => {
         const active = isActive(pathname, link.href);
         return (

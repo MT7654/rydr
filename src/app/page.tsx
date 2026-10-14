@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { RideScene } from '@/components/RideScene';
+
 import { enterDemo } from './demoActions';
 import { getDemoRole } from '@/lib/demoSession';
 import { redirect } from 'next/navigation';
@@ -31,7 +31,7 @@ async function LandingPage() {
         <p className="landing-hero__lede">Prevent a pickup misunderstanding. Challenge the right fact. Get a fair resolution for both sides.</p>
         <p className="small muted">Choose your workspace. No account or password needed.</p>
       </div>
-      <div className="landing-hero__art"><RideScene variant="resolve"/></div>
+      <div className="landing-hero__art"><img src="/illustrations/pickup-concept.webp" width={960} height={640} alt="Conceptual illustration of a rose car at a covered pickup curb"/></div>
     </section>
     <section aria-labelledby="entry-title" className="demo-role-section">
       <h2 id="entry-title">How are you using Rydr?</h2>

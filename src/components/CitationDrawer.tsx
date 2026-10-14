@@ -1,6 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import type { InspectorDetail } from './InspectButton';
+import { ReadableText } from './ReadableText';
+import { CiteList } from './Cite';
 
 /**
  * Citation drawer.
@@ -71,29 +74,49 @@ interface CitationIndex {
   policy: PolicyCitation[];
 }
 
-export function CitationDrawer({ caseId, runId }: { caseId: string; runId?: string | null }) {
+export function CitationDrawer({ caseId, runId, panels = [] }: { caseId: string; runId?: string | null; panels?: {id:string;title:string;content:ReactNode}[] }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const dialogMode = useRef<boolean|null>(null);
+  const resizing = useRef(false);
   const [index, setIndex] = useState<CitationIndex | null>(null);
-  const [open, setOpen] = useState<{ kind: 'evidence' | 'policy'; id: string } | null>(null);
+  const [open, setOpen] = useState<{ kind: 'evidence' | 'policy' | 'panel' | 'detail'; id: string } | null>(null);
+  const [detail, setDetail] = useState<InspectorDetail | null>(null);
+  const [docked, setDocked] = useState(false);
+  useEffect(()=>{const query=matchMedia('(min-width: 1280px)');const update=()=>setDocked(query.matches);update();query.addEventListener('change',update);return()=>query.removeEventListener('change',update);},[]);
   const [error, setError] = useState<string | null>(null);
   const lastTrigger = useRef<Element | null>(null);
+  const sourceContext = `${caseId}:${runId ?? "current"}`;
+  const sourceContextRef = useRef(sourceContext);
+  sourceContextRef.current = sourceContext;
 
   const load = useCallback(async () => {
     if (index) return index;
+    const requestedContext = sourceContextRef.current;
     const query = runId ? `?run=${encodeURIComponent(runId)}` : '';
     const response = await fetch(`/api/cases/${caseId}/citations${query}`, { cache: 'no-store' });
     if (!response.ok) throw new Error(`Could not load citations (${response.status}).`);
     const payload = (await response.json()) as CitationIndex;
-    setIndex(payload);
+    if (sourceContextRef.current === requestedContext) setIndex(payload);
     return payload;
   }, [caseId, index, runId]);
 
+  useEffect(()=>{
+    let cancelled=false;setIndex(null);setError(null);
+    if(open?.kind==='evidence'||open?.kind==='policy'){
+      const query=runId?'?run='+encodeURIComponent(runId):'';
+      fetch('/api/cases/'+caseId+'/citations'+query,{cache:'no-store'}).then(async response=>{if(!response.ok)throw new Error('Could not load this source context.');return response.json() as Promise<CitationIndex>;}).then(value=>{if(!cancelled)setIndex(value);}).catch(cause=>{if(!cancelled)setError(cause instanceof Error?cause.message:'Source unavailable');});
+    }
+    return()=>{cancelled=true;};
+    // Rebind sources only when immutable context changes, not on every selection.
+  },[caseId,runId]);
   // Delegated clicks, so any `data-cite` element works.
   useEffect(() => {
     const onClick = async (event: MouseEvent) => {
       const target = event.target as Element | null;
-      const trigger = target?.closest?.('[data-cite]');
+      const trigger = target?.closest?.('[data-cite], [data-inspect]');
       if (!trigger) return;
+      const panelId=trigger.getAttribute('data-inspect');
+      if(panelId){event.preventDefault();lastTrigger.current=trigger;setError(null);setOpen({kind:'panel',id:panelId});return;}
       const value = trigger.getAttribute('data-cite');
       if (!value) return;
       const [kind, id] = value.split(':');
@@ -110,31 +133,42 @@ export function CitationDrawer({ caseId, runId }: { caseId: string; runId?: stri
       }
     };
     document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
+    const inspect=(event:Event)=>{const value=(event as CustomEvent<InspectorDetail & {trigger:Element}>).detail;lastTrigger.current=value.trigger;setError(null);setDetail(value);setOpen({kind:'detail',id:value.title});};
+    const closeInspector=()=>setOpen(null);
+    const escape=(event:KeyboardEvent)=>{if(event.key==='Escape')setOpen(null);};
+    document.addEventListener('rydr:inspect',inspect);document.addEventListener('rydr:close-inspector',closeInspector);document.addEventListener('keydown',escape);
+    return () => {document.removeEventListener('click', onClick);document.removeEventListener('rydr:inspect',inspect);document.removeEventListener('rydr:close-inspector',closeInspector);document.removeEventListener('keydown',escape);};
   }, [load]);
 
   // Drive the native dialog from React state, and restore focus on close.
   useEffect(() => {
+    document.querySelectorAll('[data-cite][aria-pressed="true"],[data-inspect][aria-pressed="true"]').forEach(el=>el.removeAttribute('aria-pressed'));
+    if(open&&lastTrigger.current instanceof HTMLElement)lastTrigger.current.setAttribute('aria-pressed','true');
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (open && !dialog.open) dialog.showModal();
+    if(open&&dialog.open&&dialogMode.current!==!docked){resizing.current=true;dialog.close();}
+    if (open && !dialog.open) {if(docked)dialog.show();else dialog.showModal();dialogMode.current=!docked;}
+    document.body.classList.toggle('desk-inspector-open',Boolean(open)&&docked);
     if (!open && dialog.open) {
       dialog.close();
       const trigger = lastTrigger.current;
       if (trigger instanceof HTMLElement) trigger.focus();
     }
-  }, [open]);
+    return()=>document.body.classList.remove('desk-inspector-open');
+  }, [open,docked]);
 
   const evidence = open?.kind === 'evidence' ? index?.evidence.find((e) => e.id === open.id) : undefined;
   const policy = open?.kind === 'policy' ? index?.policy.find((p) => p.id === open.id) : undefined;
-  const missing = open && index && !evidence && !policy;
+  const missing = open && (open.kind==='evidence'||open.kind==='policy') && index && !evidence && !policy;
+  const panel=panels.find(p=>open?.kind==='panel'&&p.id===open.id);
 
   return (
     <dialog
       ref={dialogRef}
-      className="citation-dialog"
+      className={`citation-dialog desk-inspector${docked?' desk-inspector--docked':''}`}
+      aria-modal={!docked && open ? true : undefined}
       aria-labelledby="citation-title"
-      onClose={() => setOpen(null)}
+      onClose={() => {if(resizing.current){resizing.current=false;return;}setOpen(null);}}
       onClick={(event) => {
         // A click on the backdrop (outside the panel) closes the drawer.
         if (event.target === dialogRef.current) setOpen(null);
@@ -143,21 +177,24 @@ export function CitationDrawer({ caseId, runId }: { caseId: string; runId?: stri
       <div className="citation-panel">
         <div className="citation-panel__head">
           <h2 id="citation-title" className="citation-panel__title">
-            {open ? open.id : 'Citation'}
+            {panel?.title ?? (open?.kind==='detail' ? detail?.title : policy?.title ?? (evidence ? (evidence.kind==='gps'?'GPS':evidence.kind[0].toUpperCase()+evidence.kind.slice(1).replaceAll('_',' '))+' record' : 'Source inspector'))}
           </h2>
           <button
             type="button"
             className="btn btn--ghost btn--sm"
             onClick={() => setOpen(null)}
-            aria-label="Close citation"
+            aria-label="Close inspector"
           >
             Close
           </button>
         </div>
+        <p className="small muted">{caseId}{index?' · v'+index.caseVersion:''}{runId?' · recorded assessment':''}</p>
+        {panels.map(p=><div key={p.id} hidden={open?.kind!=='panel'||open.id!==p.id}>{p.content}</div>)}
+        {open?.kind==='detail'&&detail?<section><div className="original-text">{detail.text}</div>{detail.notes?.length?<ul>{detail.notes.map((n,i)=><li key={i}>{n}</li>)}</ul>:null}{detail.evidenceIds?.length?<p>Evidence: <CiteList kind="evidence" ids={detail.evidenceIds}/></p>:null}{detail.policyIds?.length?<p>Policy: <CiteList kind="policy" ids={detail.policyIds}/></p>:null}</section>:null}
 
         {error ? <div className="notice notice--danger">{error}</div> : null}
 
-        {open && !index && !error ? (
+        {open && (open.kind==='evidence'||open.kind==='policy') && !index && !error ? (
           <p className="small muted">Loading the citation…</p>
         ) : null}
 
@@ -177,7 +214,7 @@ export function CitationDrawer({ caseId, runId }: { caseId: string; runId?: stri
               </div>
               <div>
                 <dt>Time</dt>
-                <dd className="mono">{evidence.timestamp ?? 'not recorded'}</dd>
+                <dd className="mono">{evidence.timestamp?new Date(evidence.timestamp).toLocaleString('en-SG',{timeZone:'Asia/Singapore',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+' SGT':'Not recorded'}</dd>
               </div>
               <div>
                 <dt>Provenance</dt>
@@ -247,7 +284,8 @@ export function CitationDrawer({ caseId, runId }: { caseId: string; runId?: stri
             <p className="reasoning__heading" style={{ marginTop: '0.9rem' }}>
               Original contents
             </p>
-            <pre className="citation-json">{JSON.stringify(evidence.payload, null, 2)}</pre>
+            {evidence.payload&&typeof evidence.payload==='object'?<dl className="source-fields">{Object.entries(evidence.payload).map(([key,value])=><div key={key}><dt>{key.replaceAll('_',' ').replace(/([a-z])([A-Z])/g,'$1 $2').toLowerCase()}</dt><dd>{value===null?'Not supplied':typeof value==='object'?<details><summary>Inspect nested record</summary><pre className="citation-json">{JSON.stringify(value,null,2)}</pre></details>:String(value)}</dd></div>)}</dl>:<ReadableText text={String(evidence.payload??'Not supplied')} expanded/>}
+            <details><summary>Technical source and original JSON</summary><p className="mono small">{evidence.id}</p><pre className="citation-json">{JSON.stringify(evidence.payload, null, 2)}</pre></details>
 
             <p className="reasoning__heading" style={{ marginTop: '0.9rem' }}>
               Cited by these findings
@@ -278,7 +316,7 @@ export function CitationDrawer({ caseId, runId }: { caseId: string; runId?: stri
               Governing text
             </p>
             <p className="small">{policy.text}</p>
-            <p className="small muted">{policy.authority === 'official_ryde' ? 'Published Ryde policy · paraphrase' : policy.authority === 'rydr_safeguard' ? 'Rydr evidence safeguard · not an official Ryde rule' : 'Rydr example rules'}</p>
+            <p className="small muted">{policy.authority === 'official_ryde' ? 'Published Ryde policy · paraphrase' : policy.authority === 'organizer_reference' ? 'Organizer-supplied reference policy' : policy.authority === 'rydr_safeguard' ? 'Rydr evidence safeguard · not an official Ryde rule' : 'Rydr example rules'}</p>
             {policy.sourceUrl ? <p className="small"><a href={policy.sourceUrl} target="_blank" rel="noreferrer">Original Ryde source ↗</a> · checked {policy.retrievedAt}</p> : null}
             <p className="reasoning__heading" style={{ marginTop: '0.9rem' }}>
               Cited by these findings
@@ -316,4 +354,3 @@ function FindingList({ findings }: { findings: FindingRef[] }) {
     </ul>
   );
 }
-

@@ -6,13 +6,14 @@ import { useRouter } from 'next/navigation';
 import type { AdvocateOutput, ProviderCallRecord, RunRecord, Finding } from '@/domain/contracts';
 import type { CallTelemetrySummary } from '@/repositories/providerCalls';
 import { RunStatePill } from './Badges';
-import { JudgeReasoning, parseReasoningSummary } from './JudgeReasoning';
-import { ReadableText } from './ReadableText';
+
+
 import { formatSgd } from '@/domain/money';
 import { advocateHeadline } from '@/agents/explanation';
-import { displayText } from '@/domain/displayText';
+
 import { runSourceLabel } from '@/lib/runPresentation';
 import { AgentComparison } from './AgentComparison';
+import { InspectButton } from './InspectButton';
 
 const TERMINAL = new Set(['completed', 'escalated', 'failed']);
 
@@ -27,6 +28,8 @@ export function RunMonitor({
   findings = [],
   initialCalls = [],
   initialCallSummary = null,
+  historical = false,
+  comparison = true,
 }: {
   caseId: string;
   runId: string;
@@ -34,6 +37,8 @@ export function RunMonitor({
   findings?: Finding[];
   initialCalls?: ProviderCallRecord[];
   initialCallSummary?: CallTelemetrySummary | null;
+  historical?: boolean;
+  comparison?: boolean;
 }) {
   const router = useRouter();
   const [run, setRun] = useState<RunRecord>(initialRun);
@@ -81,12 +86,12 @@ export function RunMonitor({
           <div className="row">
             <RunStatePill state={run.state} />
             <span className="badge badge--neutral">{runSourceLabel(run)}</span>
-            <span className="badge badge--neutral">{run.provider}</span>
-            <span className="badge badge--neutral">calls {run.callCount}</span>
+
+
           </div>
         </div>
         <details className="audit-disclosure"><summary>Assessment version details</summary><p className="small muted" style={{ margin: 0 }}>
-          Run <span className="mono">{run.id}</span> · case version {run.caseVersion} · policy{' '}
+          Provider {run.provider} · {run.callCount} calls · Run <span className="mono">{run.id}</span> · case version {run.caseVersion} · policy{' '}
           {run.policyVersion} · prompts {run.promptVersion}
         </p></details>
         {active ? (
@@ -118,12 +123,12 @@ export function RunMonitor({
         </div>
       ) : null}
 
-      <div className="grid-3 agent-assessment-grid" role="region" aria-label="Assessment team">
+      <div className="assessment-team" role="region" aria-label="Assessment team">
         <AdvocatePanel side="rider" advocate={run.advocates.rider} state={run.state} />
         <AdvocatePanel side="driver" advocate={run.advocates.driver} state={run.state} />
         <JudgePanel run={run} />
       </div>
-      <AgentComparison findings={findings} rider={run.advocates.rider} driver={run.advocates.driver} judge={run.judge}/>
+      {comparison?<AgentComparison findings={findings} rider={run.advocates.rider} driver={run.advocates.driver} judge={run.judge}/>:null}
 
       <details className="card audit-disclosure"><summary>Technical audit · provider calls & execution events</summary>
       {calls.length > 0 ? <CallLedger calls={calls} summary={callSummary} /> : null}
@@ -140,9 +145,9 @@ export function RunMonitor({
       </div>
 
       </details>
-      {run.state === 'completed' || run.state === 'escalated' ? (
+      {comparison && !historical && (run.state === 'completed' || run.state === 'escalated') ? (
         <div className="row">
-          <Link href={`/cases/${caseId}?section=decision`} className="btn btn--primary">
+          <Link href={`/cases/${caseId}?section=${run.resolution?.disposition === 'human_review' || run.state === 'escalated' ? 'decision' : 'outcome'}`} className="btn btn--primary">
             {run.resolution?.disposition === 'human_review' || run.state === 'escalated' ? 'Continue to human review' : 'Review resolution'}
           </Link>
           <Link href={`/api/runs/${run.id}/export`} className="btn">
@@ -164,87 +169,12 @@ function AdvocatePanel({
   state: string;
 }) {
   const submitted = advocate !== null;
-  return (
-    <section className="panel agent-panel" aria-label={`${side} advocate`}>
-      <div className="panel__head">
-        <h3>{side === 'rider' ? 'Rider advocate' : 'Driver advocate'}</h3>
-        <span className={`badge badge--${submitted ? 'success' : 'accent'}`}>
-          {submitted ? 'Completed' : state === 'failed' ? 'Not submitted' : 'Gathering'}
-        </span>
-      </div>
-      {submitted ? (
-        <>
-          <p className="agent-panel__verdict">{advocateHeadline(advocate)}</p>
-          <div className="agent-panel__preview"><p className="small muted">Assessment summary</p><ReadableText text={advocate.summary} expanded/></div>
-          <details className="agent-panel__details"><summary>Full assessment</summary><div className="agent-panel__full">
-          <ReadableText text={advocate.summary}/>
-          {advocate.nextAction?<p className="notice small"><strong>Next step:</strong> {displayText(advocate.nextAction.summary)} · source owner: {advocate.nextAction.sourceOwner.replaceAll('_',' ')}</p>:null}
-          <p className="small muted">
-            Supporting findings: {advocate.supportingFindingIds.length} · Contradictory:{' '}
-            {advocate.contradictoryFindingIds.length} · Evidence cited: {advocate.evidenceIds.length}
-          </p>
-          {advocate.uncertainties.length > 0 ? (
-            <details>
-              <summary className="small">Uncertainties acknowledged ({advocate.uncertainties.length})</summary>
-              <ul className="small muted" style={{ marginTop: '0.4rem', paddingLeft: '1.1rem' }}>
-                {advocate.uncertainties.map((item) => (
-                  <li key={item}>{displayText(item)}</li>
-                ))}
-              </ul>
-            </details>
-          ) : null}
-          </div></details>
-          <p className="small muted agent-panel__footer">
-            {advocate.evidenceIds.length} evidence sources · {advocate.uncertainties.length} uncertainties<br/>
-            Model confidence {advocate.modelConfidence.toFixed(2)} (advisory only)
-          </p>
-        </>
-      ) : (
-        <p className="small muted" style={{ margin: 0 }}>
-          Waiting for this advocate to request evidence and submit a validated case.
-        </p>
-      )}
-    </section>
-  );
+  return <section className="assessment-lane" aria-label={side+' advocate'}><h3>{side==='rider'?'Rider advocate':'Driver advocate'}</h3><p className="small">{submitted?'Completed':state==='failed'?'Unavailable':state==='judging'?'Waiting for validated output':'Working / waiting'}</p>{advocate?<><p className="small muted">{advocateHeadline(advocate)}</p><InspectButton detail={{title:side==='rider'?'Rider advocate assessment':'Driver advocate assessment',text:advocate.summary,evidenceIds:advocate.evidenceIds,notes:advocate.uncertainties}}>Full assessment</InspectButton></>:<p className="small muted">Waiting for a validated advocate case.</p>}</section>;
 }
 
 function JudgePanel({ run }: { run: RunRecord }) {
   const judge = run.judge;
-  return (
-    <section className="panel agent-panel" aria-label="judge">
-      <div className="panel__head">
-        <h3>Judge</h3>
-        <span className={`badge badge--${judge ? 'success' : 'accent'}`}>
-          {judge ? 'Completed' : run.state === 'failed' ? 'Not reached' : run.state === 'judging' ? 'Evaluating evidence' : 'Waiting for advocates'}
-        </span>
-      </div>
-      {judge ? (
-        <>
-          <p className="agent-panel__verdict">
-            <strong>{judge.disposition === 'human_review' ? 'Needs your review' : judge.disposition.replace(/_/g, ' ')}</strong>
-            {judge.recommendedRefundCents !== null
-              ? ` · ${formatSgd(judge.recommendedRefundCents)}`
-              : ' · no amount recommended'}
-          </p>
-          <div className="agent-panel__preview"><p className="small muted">Assessment summary</p><p>{displayText(parseReasoningSummary(judge.reasoningSummary, []).lead)}</p><div className="agent-signal-strip"><span>{judge.establishedFindingIds.length} established</span><span>{judge.disputedFindingIds.length} disputed</span><span>{judge.missingEvidence.length} evidence gaps</span></div></div>
-          <details className="agent-panel__details"><summary>Full assessment</summary><div className="agent-panel__full"><JudgeReasoning
-            className="reasoning--panel"
-            {...parseReasoningSummary(judge.reasoningSummary, judge.missingEvidence)}
-          />
-          <p className="small muted" style={{ margin: 0 }}>
-            Policy cited: {judge.policyIds.join(', ') || 'none'}
-          </p>
-          {judge.partyExplanations?<details><summary>What each party should know</summary><p><strong>Rider:</strong> {judge.partyExplanations.rider}</p><p><strong>Driver:</strong> {judge.partyExplanations.driver}</p></details>:null}
-          </div></details>
-          <p className="small muted agent-panel__footer">{judge.policyIds.length} policy sources · {judge.missingEvidence.length} evidence gaps<br/>A reviewer decides unresolved cases.</p>
-        </>
-      ) : (
-        <p className="small muted" style={{ margin: 0 }}>
-          {run.state==='judging'?'The judge is evaluating both advocate cases and the governing policy.':'The judge starts only after both advocate cases are validated.'}
-        </p>
-      )}
-    </section>
-  );
+  return <section className="assessment-lane" aria-label="judge"><h3>Judge</h3><p className="small">{judge?'Completed':run.state==='failed'?'Unavailable':run.state==='judging'?'Evaluating':'Waiting for advocates'}</p>{judge?<><p className="small muted">{judge.disposition==='human_review'?'Human decision needed · no amount awarded':judge.disposition.replaceAll('_',' ')+(judge.recommendedRefundCents===null?'':' · '+formatSgd(judge.recommendedRefundCents))}</p><InspectButton detail={{title:'Judge assessment',text:judge.reasoningSummary,evidenceIds:judge.materialEvidenceIds,policyIds:judge.policyIds,notes:judge.missingEvidence}}>Full assessment</InspectButton></>:<p className="small muted">Begins after both advocates are validated.</p>}</section>;
 }
 
 /**
@@ -325,5 +255,3 @@ function CallLedger({
     </div>
   );
 }
-
-
