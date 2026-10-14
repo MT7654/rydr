@@ -39,3 +39,6 @@ docs/vision-key-check.json
 
 # Other local caches
 *.log
+
+# Locally generated judge verification reports
+data/judge-evaluation/
