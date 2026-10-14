@@ -42,3 +42,6 @@ Build emits nonfatal existing warnings about the Next ESLint plugin and unspecif
 ## Scope and remaining work
 
 These are actual Neon database/bucket checks using scripted fixture agents, with no new paid AI calls or real payments. The app was started and exercised through HTTP; this is not a browser automation or public-host test. Vercel has not been deployed. Configure Vercel secrets using [deployment instructions](NEON-VERCEL.md), then verify the public host/live providers before submission. Local file records were not migrated, and bounded waitUntil execution is not an automatically resumable worker queue. Synthetic test records/objects remain in isolated namespaces; no destructive cleanup was performed.
+
+
+A subsequent browser check used actual ADP agents and found/fixed shared budget scope switching plus a risk citation-limit issue. The updated suite passed 428 tests with 16 optional tests skipped; the new actual-Neon independent-budget regression passed separately. See BROWSER-VERIFICATION.md for the browser scope and results.

@@ -2,6 +2,8 @@
 
 
 
+import { applyCompletion } from '@/agents/completion';
+
 import { revalidatePath } from 'next/cache';
 
 import { redirect } from 'next/navigation';
@@ -640,6 +642,10 @@ export async function rerunTaskReview(formData: FormData): Promise<void> {
         status: 'ready',
 
       }));
+
+      // Cached terminal retries have no worker; refresh the linked failure task here.
+      if (['completed', 'escalated'].includes(run.state)) await applyCompletion(run);
+
 
     });
 

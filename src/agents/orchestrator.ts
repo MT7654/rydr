@@ -26,7 +26,7 @@ import { fingerprint } from '../lib/hash';
 import { enrichImageCatalog } from '../lib/multimodalPacket';
 import { assessBehaviorRisk, combineRisk } from '../domain/behaviorRisk';
 import { getAllCases } from '../repositories/cases';
-import { RISK_REASONER_PROMPT,riskInput,validateRiskReasoning } from './riskReasoner';
+import { RISK_REASONER_PROMPT,riskInput,validateRiskWithRepair } from './riskReasoner';
 import { waitUntil } from '@vercel/functions';
 import { afterStorageCommit } from '../repositories/neon';
 import { currentStorageSession, withStorageSession, withLock } from '../repositories/store';
@@ -522,7 +522,12 @@ export async function executeRun(
       if(!config.provider.external)return assessment;
       await spend(1,'judge');
       const reply=await invokeWithTelemetry({runId,config,repair:false,request:{role:'judge',stage:'assess_risk',runId,systemInstruction:RISK_REASONER_PROMPT,input:riskInput(caseRecord),allowedEvidenceIds:catalog.map(e=>e.id),timeoutMs:config.timeoutMs,maxOutputTokens:1100}});
-      const reasoning=validateRiskReasoning(reply.output,caseRecord);
+      const reasoning=await validateRiskWithRepair(reply.output,caseRecord,async()=>{
+        await appendEvent(runId,{runId,actor:'validator',type:'risk:repair',summary:'Risk output failed its source or format contract. One bounded repair allowed.'});
+        await spend(1,'judge');
+        const repaired=await invokeWithTelemetry({runId,config,repair:true,request:{role:'judge',stage:'assess_risk',runId,systemInstruction:RISK_REASONER_PROMPT+' Previous output failed validation. Recheck each source and every field limit. Return only the trusted risk contract, with at most four evidence IDs per signal.',input:{...riskInput(caseRecord),previousOutput:reply.output},allowedEvidenceIds:catalog.map(e=>e.id),timeoutMs:config.timeoutMs,maxOutputTokens:1100}});
+        return repaired.output;
+      });
       const combined=combineRisk(assessment,{score:0,band:'low',signals:reasoning.signals,reviewOnly:true});
       await appendEvent(runId,{runId,actor:'system',type:'risk:reasoned',summary:reasoning.summary});
       return combined;

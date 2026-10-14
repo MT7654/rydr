@@ -36,6 +36,11 @@ export function databasePool(): Pool {
   }
   return pool;
 }
+/** Shared paid-attempt budgets commit independently of a visitor operation.
+ * Only use for global counters that must survive caller rollback, never case writes. */
+export function withIndependentDatabaseOperation<T>(task: () => T): T {
+  return transactions.run(undefined, () => reads.run({ records: new Map(), prefixes: new Map() }, task));
+}
 export function databaseClient(): Pool | PoolClient {
   return transactions.getStore()?.client ?? databasePool();
 }

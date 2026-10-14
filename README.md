@@ -178,7 +178,7 @@ npm run judge:verify
 npm run build
 ```
 
-The Neon integration passed 424 tests with 15 optional external tests skipped; its seven opt-in real-service tests also passed separately. The new evaluator adds five credential-free scenarios; see its generated report for results from your checkout. Historical reports in `docs` are not proof of a new live run.
+The browser follow-up passed 428 tests with 16 optional external tests skipped. The original seven opt-in Neon service tests passed separately, as did the added shared-budget transaction regression. See [browser verification](docs/BROWSER-VERIFICATION.md). The new evaluator adds five credential-free scenarios; see its generated report for results from your checkout. Historical reports in `docs` are not proof of a new live run.
 
 | Symptom | Action |
 | --- | --- |

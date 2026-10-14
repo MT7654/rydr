@@ -65,3 +65,6 @@ Cloud checks are opt-in and create synthetic records/private objects in randomiz
 Local file mode remains available with RYDR_STORAGE_BACKEND=file. Vercel rejects file mode rather than silently storing disposable state in /tmp. Financial postings remain simulated and role selection remains a permission preview.
 
 References: [Neon connection choices](https://neon.com/docs/connect/choose-connection), [Neon storage](https://neon.com/docs/storage/overview), [Vercel runtime](https://vercel.com/docs/functions/runtimes), [Vercel waitUntil](https://vercel.com/docs/functions/functions-api-reference/vercel-functions-package).
+
+
+Browser verification found that live Navigator/collection calls inside visitor transactions require an independent shared-budget transaction. This is now implemented; failed visitor operations still consume their reserved daily attempts. Case writes retain their original transaction boundaries.

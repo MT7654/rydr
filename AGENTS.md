@@ -61,3 +61,6 @@ Credential-free evaluation stays on file storage. Tests default to file mode eve
 Run npm run db:migrate explicitly against the intended branch before serving the app. Schema changes belong in migrations/; do not edit existing migration history. Neon mutations use withLock transactions and shared nested context; workers must start only after commit. Publish terminal run state only after settlement or reviewer task persistence.
 
 With explicit cloud-test authorization, npm run test:neon verifies actual services in an isolated namespace; node scripts/neon-http-smoke.mjs verifies two local production processes against the actual services using fixture AI. These checks create synthetic records and objects and do not prove live ADP availability or Vercel hosting. Never print env values, signed credentials, or secret connection URLs in reports.
+
+
+The shared paid-attempt counter uses withIndependentDatabaseOperation so it commits independently of visitor transactions and survives rollback. Keep this escape hatch restricted to global counters, never case writes. Risk triage permits one bounded provider repair, still subject to the call cap and strict source/field validation.

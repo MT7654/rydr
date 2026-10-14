@@ -1,6 +1,6 @@
 import type { CaseDecision, CaseRecord, DecisionDisposition, RunRecord } from '../domain/contracts';
 import { getCase } from '../repositories/cases';
-import { ensureReviewTask, findOpenTask } from '../repositories/reviewTasks';
+import { ensureReviewTask, findOpenTask, updateReviewTask, computeRouting } from '../repositories/reviewTasks';
 import {
   chargeRefFor,
   effectiveDecisionForCase,
@@ -59,6 +59,27 @@ export async function applyCompletion(run: RunRecord): Promise<CompletionOutcome
 async function complete(run: RunRecord): Promise<CompletionOutcome> {
   const caseRecord = await getCase(run.caseId);
   if (!caseRecord) return { kind: 'none', note: 'Case no longer exists.' };
+
+  // A reviewer retry links the existing runtime-failure task to this run.
+  // Refresh its operational explanation once that retry produces a valid result.
+  // Historical run errors remain in their original frozen run records.
+  if (run.state !== 'failed' && run.resolution && caseRecord.version === run.caseVersion) {
+    const previous = await findOpenTask(run.caseId, 'runtime_failure');
+    if (previous?.runId === run.id) {
+      const reasonCodes = run.resolution.escalationReasons.length
+        ? run.resolution.escalationReasons : ['reviewer_confirmation_after_retry'];
+      const routing = await computeRouting({ caseId: run.caseId, openedAt: previous.createdAt, reasonCodes });
+      await updateReviewTask(previous.id, previous.revision, current => ({
+        ...current, kind: 'automatic_escalation', status: 'ready',
+        caseVersion: run.caseVersion, reasonCodes,
+        reasonSummary: run.resolution!.requiresHumanReview
+          ? 'The re-review completed. Unresolved evidence or policy conditions still require a human decision.'
+          : 'The re-review completed with a recommendation. Confirm it against the evidence before recording the reviewer decision.',
+        openQuestions: run.judge?.missingEvidence ?? [],
+        ...(routing ? { routing } : {}),
+      }));
+    }
+  }
 
   let outcome: CompletionOutcome;
 

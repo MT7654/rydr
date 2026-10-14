@@ -39,6 +39,23 @@ describe.skipIf(!enabled)('Neon actual service integration (isolated synthetic n
       expect(await store.readJson(b)).toBeNull();
     });
   }, 30000);
+  it('commits the shared provider budget outside a visitor transaction and preserves it on rollback', async () => {
+    const { reserveProviderAttempt } = await import('../src/repositories/providerBudget');
+    const oldLimit = process.env.RYDR_MAX_PROVIDER_CALLS_PER_DAY;
+    process.env.RYDR_MAX_PROVIDER_CALLS_PER_DAY = '1';
+    try {
+      await store.withStorageSession(randomUUID(), async () => {
+        await expect(store.withLock('navigator-regression', async () => {
+          expect(await reserveProviderAttempt()).toBe(true);
+          throw new Error('Synthetic provider failure');
+        })).rejects.toThrow('Synthetic provider failure');
+      });
+      expect(await reserveProviderAttempt()).toBe(false);
+    } finally {
+      if (oldLimit === undefined) delete process.env.RYDR_MAX_PROVIDER_CALLS_PER_DAY;
+      else process.env.RYDR_MAX_PROVIDER_CALLS_PER_DAY = oldLimit;
+    }
+  }, 30000);
   it('serializes concurrent mutations without losing increments', async () => {
     const file = path.join(store.RUNTIME_DIR, 'integration', 'counter.json');
     await store.withStorageSession(session, async () => {
